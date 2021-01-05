@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  ros-master:
+    image: ros:kinetic
+    command: stdbuf -o L roscore
+    networks:
+      - ros
+    restart: unless-stopped
+
+  # talker:
+  #   image: ros:kinetic
+  #   depends_on:
+  #     - ros-master
+  #   environment:
+  #     - "ROS_MASTER_URI=http://ros-master:11311"
+  #     - "ROS_HOSTNAME=talker"
+  #   command: stdbuf -o L rostopic pub /chatter std_msgs/String "hello" -r 1
+  #   networks:
+  #     - ros
+  #   restart: unless-stopped
+
+  listener:
+    image: ros:kinetic
+    depends_on:
+      - ros-master
+    environment:
+      - "ROS_MASTER_URI=http://ros-master:11311"
+      - "ROS_HOSTNAME=listener"
+    command: stdbuf -o L rostopic echo /chatter
+    networks:
+      - ros
+    restart: unless-stopped
+
+  vision-pipeline:
+    # image: ros:kinetic
+    build: ./build
+    # get output from python scripts to docker log using stdin_open and tty
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    depends_on:
+      - ros-master
+    environment:
+      - "ROS_MASTER_URI=http://ros-master:11311"
+      - "ROS_HOSTNAME=vision-pipeline"
+    networks:
+      - ros
+    restart: unless-stopped
+
+networks:
+  ros:
+    driver: bridge

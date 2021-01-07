@@ -1,4 +1,4 @@
-version: '3'
+version: '2.4' # 3.8
 
 services:
   ros-master:
@@ -43,6 +43,8 @@ services:
     environment:
       - "ROS_MASTER_URI=http://ros-master:11311"
       - "ROS_HOSTNAME=vision-pipeline"
+      - NVIDIA_VISIBLE_DEVICES=2
+      - NVIDIA_DRIVER_CAPABILITIES=all
     networks:
       - ros
     restart: unless-stopped

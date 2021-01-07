@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/opt/conda/envs/pipeline-v2/bin/python
 import rospy
 from std_msgs.msg import String
 

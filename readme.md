@@ -2,6 +2,38 @@
 
 ROS package that encapsulates the vision pipeline.
 
+## Nvidia GPU Support
+
+### Docker running as root
+
+Edit `/etc/docker/daemon.json` to contain:
+
+```
+{
+    "default-runtime":"nvidia",
+    "runtimes": {
+        "nvidia": {
+            "path": "nvidia-container-runtime",
+            "runtimeArgs": []
+        }
+    }
+}
+```
+
+Then: `sudo systemctl daemon-reload`
+
+Check if runtime is added sucessfully:
+`docker info|grep -i runtime`
+
+### Docker running rootless
+
+Do the same except put the file here: `~/.config/docker/daemon.json`.
+
+Then: `systemctl --user daemon-reload`
+
+Check if runtime is added sucessfully:
+`docker info|grep -i runtime`
+
 ## Resources
 
 Python with ROS:

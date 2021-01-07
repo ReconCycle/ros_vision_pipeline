@@ -10,8 +10,6 @@ SHELL ["/bin/bash","-c"]
 ## BEGIN: ros:core
 ################################################################
 
-# FROM ubuntu:xenial
-
 # install packages
 RUN apt-get update && apt-get install -q -y --no-install-recommends \
     dirmngr \
@@ -75,16 +73,6 @@ RUN wget --quiet https://repo.anaconda.com/archive/Anaconda3-2020.11-Linux-x86_6
     echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
     echo "conda activate base" >> ~/.bashrc
 
-# RUN apt-get install -y curl grep sed dpkg && \
-#     TINI_VERSION=`curl https://github.com/krallin/tini/releases/latest | grep -o "/v.*\"" | sed 's:^..\(.*\).$:\1:'` && \
-#     curl -L "https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini_${TINI_VERSION}.deb" > tini.deb && \
-#     dpkg -i tini.deb && \
-#     rm tini.deb && \
-#     apt-get clean
-
-# ENTRYPOINT [ "/usr/bin/tini", "--" ]
-# CMD [ "/bin/bash" ]
-
 RUN conda config --add channels conda-forge
 RUN conda config --set channel_priority false
 # RUN conda config --set allow_conda_downgrades true # not working
@@ -93,20 +81,9 @@ RUN conda config --set channel_priority false
 ## END: anaconda3
 ################################################################
 
-
-# Install python
 RUN apt-get update && apt-get install -y \
     software-properties-common
 RUN add-apt-repository universe
-# RUN apt-get update && apt-get install -y \
-#     git \
-#     python3 \
-#     python3-pip
-
-# Install python packages
-# RUN pip3 install pyyaml rospkg
-# RUN conda install pyyaml rospkg # WON'T WORK, NEEDS CONFIRMATION
-
 
 # Create local catkin workspace
 ENV CATKIN_WS=/root/catkin_ws

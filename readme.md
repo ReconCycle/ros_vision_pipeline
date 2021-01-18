@@ -4,9 +4,25 @@ ROS package that encapsulates the vision pipeline.
 
 ## Pylon Basler Camera Software Suite on Docker Host Machine
 
-Download and install the Pylon camera software suite.
+The Basler camera we are using is: Basler acA4600-7gc
 
-[pylon 6.1.1 Camera Software Suite Linux x86 (64 Bit) - Debian Installer Package](https://www.baslerweb.com/de/vertrieb-support/downloads/downloads-software/#type=pylonsoftware;language=all;version=all;os=linuxx8664bit)
+1. Download and install the Pylon camera software suite.
+ Link: [pylon 6.1.1 Camera Software Suite Linux x86 (64 Bit) - Debian Installer Package](https://www.baslerweb.com/de/vertrieb-support/downloads/downloads-software/#type=pylonsoftware;language=all;version=all;os=linuxx8664bit)
+
+2. To connect to the Basler camera over ethernet, create a new ethernet profile with settings:
+
+- IPv4 Method: Manual
+- Address: 192.168.1.200
+- Netmask: 255.255.255.0
+- Gateway: 192.168.1.1
+
+![basler_ethernet_profile](./notes/basler_ethernet_profile.png)
+
+3. Open the pylon viewer (on the host machine) and check that the Basler Camera appears here.
+
+4. Settings to set for the Basler camera in pylon Viewer, see images in notes folder.
+
+!todo, screenshot all the settings
 
 The camera uses the [pypylon api](https://github.com/basler/pypylon) and this is installed in this docker image.
 

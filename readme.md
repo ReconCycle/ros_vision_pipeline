@@ -2,9 +2,28 @@
 
 ROS package that encapsulates the vision pipeline.
 
+## Pylon Basler Camera Software Suite on Docker Host Machine
+
+Download and install the Pylon camera software suite.
+
+[pylon 6.1.1 Camera Software Suite Linux x86 (64 Bit) - Debian Installer Package](https://www.baslerweb.com/de/vertrieb-support/downloads/downloads-software/#type=pylonsoftware;language=all;version=all;os=linuxx8664bit)
+
+The camera uses the [pypylon api](https://github.com/basler/pypylon) and this is installed in this docker image.
+
 ## Nvidia GPU Support
 
+
+### CUDA Install on docker host machine
+
+!todo
+
+
 ### Docker running as root
+
+First you need to install nvidia-container-runtime, [instructions here](https://nvidia.github.io/nvidia-container-runtime/) and run:
+```
+sudo apt-get install nvidia-container-runtime
+```
 
 Edit `/etc/docker/daemon.json` to contain:
 
@@ -33,6 +52,14 @@ Then: `systemctl --user daemon-reload`
 
 Check if runtime is added sucessfully:
 `docker info|grep -i runtime`
+
+## Running Docker container
+
+Run:
+```
+$ cd ros-vision-pipeline
+$ docker-compose up -d
+```
 
 ## Resources
 

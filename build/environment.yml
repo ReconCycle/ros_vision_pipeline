@@ -66,5 +66,6 @@ dependencies:
   ## ROS 1 stuff
   - rospkg
   - pip:
-    - pycocotools 
+    - pycocotools
+    - pypylon # Basler camera api
 

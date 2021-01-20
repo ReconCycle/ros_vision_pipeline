@@ -44,6 +44,13 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     python-rosdep \
     python-rosinstall \
     python-vcstools \
+    python-catkin-tools \
+    # we are using anaconda so we don't need these (these are required for installing cv_bridge)
+    # python3-dev \
+    # python3-catkin-pkg-modules \
+    # python3-numpy \
+    # python3-yaml \
+    ros-kinetic-cv-bridge \
     && rm -rf /var/lib/apt/lists/*
 
 # bootstrap rosdep
@@ -88,23 +95,49 @@ RUN add-apt-repository universe
 # Create local catkin workspace
 ENV CATKIN_WS=/root/catkin_ws
 ENV ROS_PYTHON_VERSION=3
-RUN mkdir -p $CATKIN_WS/src/vision-pipeline
+RUN mkdir -p $CATKIN_WS/src/ros-vision-pipeline
 WORKDIR $CATKIN_WS
 
-COPY environment.yml $CATKIN_WS/src/vision-pipeline
-RUN cd $CATKIN_WS/src/vision-pipeline && conda env create -f environment.yml --debug
+COPY environment.yml $CATKIN_WS/src/ros-vision-pipeline
+RUN cd $CATKIN_WS/src/ros-vision-pipeline && conda env create -f environment.yml --debug
 
-COPY vision-pipeline $CATKIN_WS/src/vision-pipeline
-RUN chmod +x $CATKIN_WS/src/vision-pipeline/scripts/talker.py
-RUN chmod +x $CATKIN_WS/src/vision-pipeline/scripts/listener.py
+# install pypylon from wheel
+COPY pypylon-1.6.0-cp37-cp37m-linux_x86_64.whl /root
+RUN conda run -n pipeline-v2 pip3 install /root/pypylon-1.6.0-cp37-cp37m-linux_x86_64.whl
+
+COPY ros-vision-pipeline $CATKIN_WS/src/ros-vision-pipeline
+RUN chmod +x $CATKIN_WS/src/ros-vision-pipeline/scripts/*.py
 
 # Initialize local catkin workspace
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
-    # Install dependencies
     && cd $CATKIN_WS \
-    && rosdep install -y --from-paths . --ignore-src --rosdistro ${ROS_DISTRO} \
-    # Build catkin workspace
-    && catkin_make
+    && rosdep install -y --from-paths . --ignore-src --rosdistro ${ROS_DISTRO}
+
+RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
+    && cd $CATKIN_WS \
+    && catkin init \
+    && catkin config -DPYTHON_EXECUTABLE=/opt/conda/envs/pipeline-v2/bin/python3 -DPYTHON_INCLUDE_DIR=/opt/conda/envs/pipeline-v2/include/python3.7m -DPYTHON_LIBRARY=/opt/conda/envs/pipeline-v2/lib/libpython3.7m.so \
+    && catkin config --install \
+    && cd src \
+    && git clone -b kinetic https://github.com/ros-perception/vision_opencv.git
+
+# cv_bridge fix
+RUN sed -i 's/python3/python-py35/g' src/vision_opencv/cv_bridge/CMakeLists.txt
+
+RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
+    && cd $CATKIN_WS \
+    && catkin build cv_bridge -DSETUPTOOLS_DEB_LAYOUT=OFF \ 
+    # I was getting some error without -DSETUPTOOLS_DEB_LAYOUT=OFF
+    && source install/setup.bash --extend
+
+# install ros-vision-pipeline
+RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
+    && catkin build ros-vision-pipeline
+    # && catkin install
+    # catkin install doesn't seem to do anything?
+
+# ROS breaks opencv because python3 will try and default to the python2.7 version of opencv. Delete it.
+RUN rm /opt/ros/kinetic/lib/python2.7/dist-packages/cv2.so
 
 # Always source ros_catkin_entrypoint.sh when launching bash (e.g. when attaching to container)
 RUN echo "source /entrypoint.sh" >> /root/.bashrc
@@ -113,7 +146,6 @@ COPY ./entrypoint.sh /
 RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
-# CMD ["bash"]
 
 # stop docker from exiting immediately
 CMD tail -f /dev/null 

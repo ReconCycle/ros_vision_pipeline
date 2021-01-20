@@ -58,14 +58,26 @@ dependencies:
   - pytorch::pytorch >=1.0.1
   - cudatoolkit
   - cudnn
+  - tensorboardx
+  ## ndds-to-coco tools
+  
   # - pytorch::cuda100
   # - git # to download COCO dataset
   # - curl # to download COCO dataset
   # - unzip # to download COCO dataset
   # - conda-forge::bash # to download COCO dataset
+
   ## ROS 1 stuff
   - rospkg
+  - catkin_pkg
+  # - ros-rosbag
+  # - ros-sensor-msgs
   - pip:
+<<<<<<< HEAD
     - pycocotools
     - pypylon # Basler camera api
 
+=======
+    - pycocotools 
+    # - pypylon # Basler camera api # not working, using the wheel instead
+>>>>>>> ros working better

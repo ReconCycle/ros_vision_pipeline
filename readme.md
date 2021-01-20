@@ -93,9 +93,31 @@ ROS series on Python Package:
 ROS docker setup:
 
 - https://github.com/gramaziokohler/ros_docker
-
 - https://github.com/ReconCycle/docker_examples/blob/master/compose_files/ros1_echo/docker-compose.yml
 
 Alternative method without requiring to use ROS directly:
 
 - https://github.com/gramaziokohler/roslibpy
+
+ROS opencv cv_bridge:
+
+- https://stackoverflow.com/questions/49221565/unable-to-use-cv-bridge-with-ros-kinetic-and-python3
+
+Publish/Subscribe to Images in ROS:
+
+- https://stackoverflow.com/questions/55377442/how-to-subscribe-and-publish-images-in-ros
+- https://stackoverflow.com/questions/58590277/how-to-use-opencv-python-in-ros
+
+ROS incompatibility with OpenCV Python3:
+
+- https://stackoverflow.com/questions/43019951/after-install-ros-kinetic-cannot-import-opencv 
+
+Supervisors
+
+- https://github.com/just-containers/s6-overlay#quickstart
+
+Reduce docker size:
+
+TODO
+
+- https://jcristharif.com/conda-docker-tips.html

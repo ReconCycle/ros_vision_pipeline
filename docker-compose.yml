@@ -45,6 +45,7 @@ services:
       - "ROS_HOSTNAME=vision-pipeline"
       - NVIDIA_VISIBLE_DEVICES=2
       - NVIDIA_DRIVER_CAPABILITIES=all
+      - GITHUB_APP_PASSWORD=${GITHUB_APP_PASSWORD} # set this in the .env file
     networks:
       - ros
     restart: unless-stopped

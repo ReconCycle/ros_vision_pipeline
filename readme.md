@@ -112,6 +112,10 @@ ROS incompatibility with OpenCV Python3:
 
 - https://stackoverflow.com/questions/43019951/after-install-ros-kinetic-cannot-import-opencv 
 
+ROS Yolact:
+
+- https://github.com/Eruvae/yolact_ros
+
 Supervisors
 
 - https://github.com/just-containers/s6-overlay#quickstart

@@ -2,6 +2,7 @@ version: '2.4' # 3.8
 
 services:
   ros-master:
+    container_name: ros-master
     image: ros:kinetic
     command: stdbuf -o L roscore
     networks:
@@ -20,20 +21,51 @@ services:
   #     - ros
   #   restart: unless-stopped
 
-  listener:
-    image: ros:kinetic
-    depends_on:
-      - ros-master
+  # listener:
+  #   image: ros:kinetic
+  #   depends_on:
+  #     - ros-master
+  #   environment:
+  #     - "ROS_MASTER_URI=http://ros-master:11311"
+  #     - "ROS_HOSTNAME=listener"
+  #   command: stdbuf -o L rostopic echo /chatter
+  #   networks:
+  #     - ros
+  #   restart: unless-stopped
+
+  novnc:
+    image: theasp/novnc:latest
+    container_name: novnc
     environment:
-      - "ROS_MASTER_URI=http://ros-master:11311"
-      - "ROS_HOSTNAME=listener"
-    command: stdbuf -o L rostopic echo /chatter
+      # Adjust to your screen size
+      - DISPLAY_WIDTH=1600
+      - DISPLAY_HEIGHT=968
+      - RUN_XTERM=no
+    ports:
+      - "8080:8080"
     networks:
       - ros
     restart: unless-stopped
 
-  vision-pipeline:
-    # image: ros:kinetic
+  ros-rviz:
+    container_name: ros-rviz
+    build: ./build-rviz
+    depends_on:
+      - ros-master
+      - novnc
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    environment:
+      - "ROS_MASTER_URI=http://ros-master:11311"
+      - "ROS_HOSTNAME=rviz"
+      - DISPLAY=novnc:0.0
+    command: stdbuf -o L rosrun rviz rviz
+    networks:
+      - ros
+    restart: unless-stopped
+
+  ros-vision-pipeline:
+    container_name: ros-vision-pipeline
     build: ./build
     # get output from python scripts to docker log using stdin_open and tty
     stdin_open: true # docker run -i
@@ -46,6 +78,8 @@ services:
       - NVIDIA_VISIBLE_DEVICES=2
       - NVIDIA_DRIVER_CAPABILITIES=all
       - GITHUB_APP_PASSWORD=${GITHUB_APP_PASSWORD} # set this in the .env file
+    volumes:
+      - ./data:/root/data
     networks:
       - ros
     restart: unless-stopped

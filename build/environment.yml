@@ -73,11 +73,5 @@ dependencies:
   # - ros-rosbag
   # - ros-sensor-msgs
   - pip:
-<<<<<<< HEAD
-    - pycocotools
-    - pypylon # Basler camera api
-
-=======
     - pycocotools 
     # - pypylon # Basler camera api # not working, using the wheel instead
->>>>>>> ros working better

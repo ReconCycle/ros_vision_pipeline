@@ -17,12 +17,15 @@ if __name__ == '__main__':
     img_path = "./example.png"
     image = cv2.imread(img_path)
     br = CvBridge()
-    rospy.init_node('camera_subscriber', anonymous=True)
-    pub = rospy.Publisher('/camera/image_color', Image, queue_size=10)
+    pub = rospy.Publisher('/camera/image_color', Image, queue_size=50)
     loop_rate = rospy.Rate(1)
 
     while not rospy.is_shutdown():
-        rospy.loginfo('publishing image')
+        
         if image is not None:
+            rospy.loginfo('publishing image')
             pub.publish(br.cv2_to_imgmsg(image))
+        else:
+            rospy.loginfo('image is none :(')
+
         loop_rate.sleep()

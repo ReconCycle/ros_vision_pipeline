@@ -19,6 +19,5 @@ if [ ! -d "$CATKIN_WS/src/ros-vision-pipeline/vision-pipeline" ]; then
 fi
 
 cd $CATKIN_WS
-rosrun ros-vision-pipeline camera_subscriber.py
 
 exec "$@"

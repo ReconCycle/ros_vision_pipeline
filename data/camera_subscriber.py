@@ -2,6 +2,7 @@
 
 import sys
 import os
+import cv2
 import rospy
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
@@ -12,6 +13,7 @@ br = CvBridge()
 def callback(msg):
     print("received image!")
     image = br.imgmsg_to_cv2(msg)
+    cv2.imwrite('./subscriber_image.png', image)
     
 
 if __name__ == '__main__':

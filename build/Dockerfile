@@ -28,29 +28,21 @@ ENV LC_ALL C.UTF-8
 
 ENV ROS_DISTRO kinetic
 
-# install ros packages
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ros-kinetic-ros-core=1.3.2-0* \
-    && rm -rf /var/lib/apt/lists/*
-
 ################################################################
 ## END: ros:core
 ## BEGIN: ros:kinetic
 ################################################################
 
-# install bootstrap tools
+# install ros packages
 RUN apt-get update && apt-get install --no-install-recommends -y \
+    ros-kinetic-ros-core=1.3.2-0* \
     build-essential \
     python-rosdep \
     python-rosinstall \
     python-vcstools \
     python-catkin-tools \
-    # we are using anaconda so we don't need these (these are required for installing cv_bridge)
-    # python3-dev \
-    # python3-catkin-pkg-modules \
-    # python3-numpy \
-    # python3-yaml \
     ros-kinetic-cv-bridge \
+    vim \
     && rm -rf /var/lib/apt/lists/*
 
 # bootstrap rosdep

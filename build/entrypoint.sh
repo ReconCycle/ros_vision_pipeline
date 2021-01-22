@@ -14,10 +14,11 @@ conda activate pipeline-v2
 
 #check if we have already cloned the project. If not do it now.
 if [ ! -d "$CATKIN_WS/src/ros-vision-pipeline/vision-pipeline" ]; then
-    cd $CATKIN_WS/src/ros-vision-pipeline \
-        && git clone https://$GITHUB_APP_PASSWORD@github.com/ReconCycle/vision-pipeline.git
+    echo "cloning of vision-pipeline disabled (we will develop in a volume for now)"
+    # cd $CATKIN_WS/src/ros-vision-pipeline \
+    #     && git clone https://$GITHUB_APP_PASSWORD@github.com/ReconCycle/vision-pipeline.git
 fi
 
-cd $CATKIN_WS
+cd /root/
 
 exec "$@"

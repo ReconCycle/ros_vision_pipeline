@@ -80,6 +80,7 @@ services:
       - GITHUB_APP_PASSWORD=${GITHUB_APP_PASSWORD} # set this in the .env file
     volumes:
       - ./data:/root/data
+      - /home/sruiz/projects/reconcycle/pipeline-v2:/root/vision-pipeline
     networks:
       - ros
     restart: unless-stopped

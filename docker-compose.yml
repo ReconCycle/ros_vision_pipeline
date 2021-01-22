@@ -57,7 +57,7 @@ services:
     tty: true        # docker run -t
     environment:
       - "ROS_MASTER_URI=http://ros-master:11311"
-      - "ROS_HOSTNAME=rviz"
+      - "ROS_HOSTNAME=ros-rviz" # must be the container_name
       - DISPLAY=novnc:0.0
     command: stdbuf -o L rosrun rviz rviz
     networks:
@@ -74,7 +74,7 @@ services:
       - ros-master
     environment:
       - "ROS_MASTER_URI=http://ros-master:11311"
-      - "ROS_HOSTNAME=vision-pipeline"
+      - "ROS_HOSTNAME=ros-vision-pipeline" # must be the container_name
       - NVIDIA_VISIBLE_DEVICES=2
       - NVIDIA_DRIVER_CAPABILITIES=all
       - GITHUB_APP_PASSWORD=${GITHUB_APP_PASSWORD} # set this in the .env file

@@ -9,6 +9,11 @@ source "/opt/ros/$ROS_DISTRO/setup.bash" && source "$CATKIN_WS/devel/setup.bash"
 # export PYTHONPATH="/root/catkin_ws/devel/lib/python3.7/site-packages:$PYTHONPATH"
 # export PYTHONPATH="/opt/conda/envs/pipeline-v2/lib/python3.7/site-packages:$PYTHONPATH"
 
+# if something goes wrong with activating the environment we might have to do:
+echo $LD_LIBRARY_PATH
+export LD_LIBRARY_PATH="/opt/conda/envs/pipeline-v2/lib:$LD_LIBRARY_PATH"
+
+echo "activating pipeline-v2 conda env"
 # activate our conda environment
 conda activate pipeline-v2
 

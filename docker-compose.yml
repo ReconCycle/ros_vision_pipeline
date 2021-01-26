@@ -86,13 +86,7 @@ services:
     volumes:
       - ./data:/root/data
       - $HOME/projects/vision-pipeline:/root/vision-pipeline
-    # add camera device
-    network_mode: host # this works, but then I can't access ROS
-    # cap_add:
-      # - ALL
-    # privileged: true # might be required, testing ...
-    # devices:
-    #   - /dev/:/dev/
+    network_mode: host # workaround to use the camera
     # networks:
     #   - ros
     restart: unless-stopped

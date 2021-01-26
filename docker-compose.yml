@@ -3,6 +3,8 @@ version: '2.4' # 3.8
 services:
   ros-master:
     container_name: ros-master
+    ports: # not necessary, works fine without, only required for host mode 
+      - 11311:11311
     image: ros:kinetic
     command: stdbuf -o L roscore
     networks:
@@ -73,16 +75,26 @@ services:
     depends_on:
       - ros-master
     environment:
-      - "ROS_MASTER_URI=http://ros-master:11311"
-      - "ROS_HOSTNAME=ros-vision-pipeline" # must be the container_name
-      - NVIDIA_VISIBLE_DEVICES=2
+      # - "ROS_MASTER_URI=http://ros-master:11311"
+      # - "ROS_HOSTNAME=localhost" # must be the container_name
+      # for network_mode: host, do this:
+      - ROS_MASTER_URI=http://localhost:11311
+      - ROS_IP=192.168.1.200 # $ hostname -I
+      - NVIDIA_VISIBLE_DEVICES=0
       - NVIDIA_DRIVER_CAPABILITIES=all
       - GITHUB_APP_PASSWORD=${GITHUB_APP_PASSWORD} # set this in the .env file
     volumes:
       - ./data:/root/data
-      - /home/sruiz/projects/reconcycle/pipeline-v2:/root/vision-pipeline
-    networks:
-      - ros
+      - $HOME/projects/vision-pipeline:/root/vision-pipeline
+    # add camera device
+    network_mode: host # this works, but then I can't access ROS
+    # cap_add:
+      # - ALL
+    # privileged: true # might be required, testing ...
+    # devices:
+    #   - /dev/:/dev/
+    # networks:
+    #   - ros
     restart: unless-stopped
 
 networks:

@@ -33,6 +33,32 @@ The camera uses the [pypylon api](https://github.com/basler/pypylon) and this is
 
 !todo
 
+Prequisites:
+```
+sudo apt install build-essential libglvnd-dev pkg-config
+```
+Now [download here the nvidia drivers](https://www.nvidia.com/Download/index.aspx) and run as root to install.
+
+
+Installation guide for CUDA from nvidia [here](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#runfile-installation).
+
+- You may need to disable the built in display driver: [disable display driver](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#runfile-nouveau)
+
+- You may need gcc version 8 to run CUDA 10.2. If so, run: `sudo apt install gcc-8 g++-8`. [Guide here](https://linuxize.com/post/how-to-install-gcc-on-ubuntu-20-04/) on how to switch gcc versions.
+
+Install CUDA 10.2 on your host system. Go to [Cuda Toolkit Archive](https://developer.nvidia.com/cuda-toolkit-archive) then click on **CUDA Toolkit 10.2**. Select your operating system and download the runfile. Run the runfile using `sudo`.
+
+
+CUDA says:
+```
+Please make sure that
+ -   PATH includes /usr/local/cuda-10.2/bin
+ -   LD_LIBRARY_PATH includes /usr/local/cuda-10.2/lib64, or, add /usr/local/cuda-10.2/lib64 to /etc/ld.so.conf and run ldconfig as root
+
+```
+
+I'm missing the driver: do this: `sudo <CudaInstaller>.run --silent --driver`
+
 
 ### Docker running as root
 

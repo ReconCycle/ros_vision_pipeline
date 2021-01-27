@@ -2,6 +2,8 @@
 
 ROS package that encapsulates the vision pipeline.
 
+![RViz](./readme_rviz.png)
+
 ## Pylon Basler Camera Software Suite on Docker Host Machine
 
 The Basler camera we are using is: Basler acA4600-7gc

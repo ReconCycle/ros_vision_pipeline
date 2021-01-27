@@ -97,6 +97,8 @@ Then: `systemctl --user daemon-reload`
 Check if runtime is added sucessfully:
 `docker info|grep -i runtime`
 
+ONLY INSTALL DOCKER AFTER DOING THESE STEPS IF YOU ARE RUNNING ROOTLESS!
+
 ## Running Docker container
 
 Run:

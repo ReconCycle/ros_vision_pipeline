@@ -105,7 +105,7 @@ Edit the `docker-compose.yml` file and remove the ROS master and Rviz if you alr
 
 The container is running in `host` mode because this is the easiest way to give it access to the Basler camera. The `ROS_IP` needs to be set correctly. Do this by running `$ hostname -I` on the host and setting the `ROS_IP` to this IP (take the first one if it gives multiple IP addresses).
 
-Clone the [https://github.com/ReconCycle/vision-pipeline](https://github.com/ReconCycle/vision-pipeline) project. Set the path of the project in the `volumes` section of the `docker-compose.yml`. This is the path before the ":" sign. Do not change `/root/vision-pipeline`.
+Clone the [https://github.com/ReconCycle/vision-pipeline](https://github.com/ReconCycle/vision-pipeline) project. ** Cloning this repository requires git LFS.** Set the path of the project in the `volumes` section of the `docker-compose.yml`. This is the path before the ":" sign. Do not change `/root/vision-pipeline`.
 
 ```
 volumes:
@@ -150,7 +150,8 @@ The JSON string is a list where each object in the list represents a detection a
 - `class_name` the class name of the detection,
 - `score` the detection score. Float in the interval [0, 1] for how confident the model is in the prediction,
 - `obb_corners` the corners of the oriented bounding box in a list of x, y coordinates,
-- `obb_center` x, y coordinates of oriented bounding box center.
+- `obb_center` x, y coordinates of oriented bounding box center,
+- `obb_rot_quat` rotation quaternion of the oriented bounding box.
 
 The list of possible class names is: front, back, side1, side2, battery, pcb, and internals. Where: front, back, side1, and side2, correspond to the poses of the h.c.a.
 

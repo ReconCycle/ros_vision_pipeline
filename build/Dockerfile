@@ -87,18 +87,20 @@ RUN add-apt-repository universe
 # Create local catkin workspace
 ENV CATKIN_WS=/root/catkin_ws
 ENV ROS_PYTHON_VERSION=3
-RUN mkdir -p $CATKIN_WS/src/ros-vision-pipeline
+RUN mkdir -p $CATKIN_WS/src/ros_vision_pipeline
 WORKDIR $CATKIN_WS
 
-COPY environment.yml $CATKIN_WS/src/ros-vision-pipeline
-RUN cd $CATKIN_WS/src/ros-vision-pipeline && conda env create -f environment.yml --debug
+COPY environment.yml $CATKIN_WS/src/ros_vision_pipeline
+RUN cd $CATKIN_WS/src/ros_vision_pipeline && conda env create -f environment.yml --debug
 
 # install pypylon from wheel
 COPY pypylon-1.6.0-cp37-cp37m-linux_x86_64.whl /root
 RUN conda run -n pipeline-v2 pip3 install /root/pypylon-1.6.0-cp37-cp37m-linux_x86_64.whl
 
-COPY ros-vision-pipeline $CATKIN_WS/src/ros-vision-pipeline
-RUN chmod +x $CATKIN_WS/src/ros-vision-pipeline/scripts/*.py
+COPY ros_vision_pipeline $CATKIN_WS/src/ros_vision_pipeline
+RUN chmod +x $CATKIN_WS/src/ros_vision_pipeline/scripts/*.py
+
+RUN conda run -n pipeline-v2 pip3 install empy
 
 # Initialize local catkin workspace
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
@@ -122,9 +124,9 @@ RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
     # I was getting some error without -DSETUPTOOLS_DEB_LAYOUT=OFF
     && source install/setup.bash --extend
 
-# install ros-vision-pipeline
+# install ros_vision_pipeline
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
-    && catkin build ros-vision-pipeline
+    && catkin build ros_vision_pipeline
     # && catkin install
     # catkin install doesn't seem to do anything?
 

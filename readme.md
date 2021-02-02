@@ -139,6 +139,12 @@ To run the vision-pipeline run:
 ```
 python ros_pipeline.py
 ```
+The `ros_pipeline.py` script can take the following arguments:
+- publish_continuously (default False): Publish labelled images and detections continuously
+                    otherwise create a service.
+- publish_on_service_call (default True): When a service call is received, also publish the
+                    image and detections
+
 Now you should be able to use the following nodes:
 
 - `/camera/image_color` camera image (undistorted),
@@ -149,12 +155,19 @@ The JSON string is a list where each object in the list represents a detection a
 
 - `class_name` the class name of the detection,
 - `score` the detection score. Float in the interval [0, 1] for how confident the model is in the prediction,
-- `obb_corners` the corners of the oriented bounding box in a list of x, y coordinates,
-- `obb_center` x, y coordinates of oriented bounding box center,
+- `obb_corners` the corners of the oriented bounding box in a list of x, y coordinates in meters,
+- `obb_center` x, y coordinates of oriented bounding box center in meters,
 - `obb_rot_quat` rotation quaternion of the oriented bounding box.
 
 The list of possible class names is: front, back, side1, side2, battery, pcb, and internals. Where: front, back, side1, and side2, correspond to the poses of the h.c.a.
 
+There is a ROS service called `get_detection`. This service is only created when `ros_pipeline.py` is started with the argument `publish_continuously False`, which is the default. The service will return the following:
+```
+bool success
+sensor_msgs/Image image
+string detections
+```
+This has been defined in `build/ros_vision_pipeline_srv/Detection.srv`.
 
 ## Resources
 

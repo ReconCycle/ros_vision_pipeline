@@ -121,19 +121,20 @@ Run:
 $ cd ros-vision-pipeline
 $ docker-compose up -d
 ```
-The container should now be running, but it will not do anything on its own. Run:
+The container should now be running. You can automatically get it to run the pipeline with the following line in the `docker-compose.yml` file.
+```yaml
+command: python ros_pipeline.py publish_continuously=True
+```
+If you comment out this line you can bash into the container and try other things. Run:
 ```
 docker-compose exec ros-vision-pipeline bash
 ```
-You are now inside the docker container. Run:
+You are now inside the docker container. To publish images from the Basler camera run:
 ```
-cd vision-pipeline
-```
-To check that the Basler camera is working run:
-```
-python ros_camera_test.py
+python ros_camera_publisher.py
 ```
 You should be able to see the live camera feed in Rviz on the node `/camera/image_color`.
+You can run this on a separate machine using the [ros-basler-camera](https://github.com/ReconCycle/ros-basler-camera) docker image that doesn't have the cuda requirements.
 
 To run the vision-pipeline run:
 ```

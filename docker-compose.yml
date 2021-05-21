@@ -11,30 +11,6 @@ services:
       - ros
     restart: unless-stopped
 
-  # talker:
-  #   image: ros:kinetic
-  #   depends_on:
-  #     - ros-master
-  #   environment:
-  #     - "ROS_MASTER_URI=http://ros-master:11311"
-  #     - "ROS_HOSTNAME=talker"
-  #   command: stdbuf -o L rostopic pub /chatter std_msgs/String "hello" -r 1
-  #   networks:
-  #     - ros
-  #   restart: unless-stopped
-
-  # listener:
-  #   image: ros:kinetic
-  #   depends_on:
-  #     - ros-master
-  #   environment:
-  #     - "ROS_MASTER_URI=http://ros-master:11311"
-  #     - "ROS_HOSTNAME=listener"
-  #   command: stdbuf -o L rostopic echo /chatter
-  #   networks:
-  #     - ros
-  #   restart: unless-stopped
-
   novnc:
     image: theasp/novnc:latest
     container_name: novnc
@@ -87,6 +63,7 @@ services:
       - ./data:/root/data
       - $HOME/projects/vision-pipeline:/root/vision-pipeline
     network_mode: host # workaround to use the camera
+    command: python ros_pipeline.py publish_continuously=True
     # networks:
     #   - ros
     restart: unless-stopped

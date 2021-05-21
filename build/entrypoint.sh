@@ -15,6 +15,7 @@ export LD_LIBRARY_PATH="/opt/conda/envs/pipeline-v2/lib:$LD_LIBRARY_PATH"
 
 echo "activating pipeline-v2 conda env"
 # activate our conda environment
+. /opt/conda/etc/profile.d/conda.sh
 conda activate pipeline-v2
 
 #check if we have already cloned the project. If not do it now.
@@ -24,6 +25,12 @@ if [ ! -d "$CATKIN_WS/src/ros-vision-pipeline/vision-pipeline" ]; then
     #     && git clone https://$GITHUB_APP_PASSWORD@github.com/ReconCycle/vision-pipeline.git
 fi
 
-cd /root/
+#install deeplabcut if it's not installed yet
+if ! pip list | grep -F deeplabcut &> /dev/null; then
+    echo "installing deeplabcut..."
+    cd /root/vision-pipeline/dlc/DeepLabCut-2.2b8 && ./reinstall.sh
+fi
+
+cd /root/vision-pipeline
 
 exec "$@"

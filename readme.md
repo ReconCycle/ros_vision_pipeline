@@ -29,9 +29,18 @@ In Göttingen we have the lens mounted **67cm** above the work surface. This all
 
 3. Open the pylon viewer (on the host machine) and check that the Basler Camera appears here.
 
-4. Settings to set for the Basler camera in pylon Viewer, see images in notes folder.
+4. Settings to set for the Basler camera in pylon Viewer, see images in notes folder. Alternatively, do the following:
 
-!todo, screenshot all the settings
+In Pylon Viewer first set **Configuration Sets** to `Default configuration Set`.
+
+Then:
+- In **Analog Controls** set `Gain Auto` -> `Continuous`, and `Gamma Selector` -> `sRGB`. 
+- In **Image Format Controls set** set `Pixel Format` -> `YUV 422 (YUYV) Packed`
+- In **AOI Controls** set `width` and `height` -> `2900` and `Center X and Y` -> `True`.
+- In **Color Improvements Control** set `Balance White Auto` -> `Continuous`.
+
+Now in **Configuration Sets** save to `User Set 1` so that it can be loaded again easily.
+
 
 The camera uses the [pypylon api](https://github.com/basler/pypylon) and this is installed in this docker image.
 

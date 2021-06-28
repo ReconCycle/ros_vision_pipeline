@@ -35,9 +35,10 @@ In Pylon Viewer first set **Configuration Sets** to `Default configuration Set`.
 
 Then:
 - In **Analog Controls** set `Gain Auto` -> `Continuous`, and `Gamma Selector` -> `sRGB`. 
-- In **Image Format Controls set** set `Pixel Format` -> `YUV 422 (YUYV) Packed`
+- In **Image Format Controls set** set `Pixel Format` -> `YUV 422 (YUYV) Packed`.
 - In **AOI Controls** set `width` and `height` -> `2900` and `Center X and Y` -> `True`.
 - In **Color Improvements Control** set `Balance White Auto` -> `Continuous`.
+- In **Acquisition Controls** set `Exposure Auto` -> `Continuous` (this is the same as pressing the Automatic Image adjustment button I think?).
 
 Now in **Configuration Sets** save to `User Set 1` so that it can be loaded again easily.
 

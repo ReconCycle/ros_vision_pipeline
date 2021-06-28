@@ -31,9 +31,7 @@ In Göttingen we have the lens mounted **67cm** above the work surface. This all
 
 4. Settings to set for the Basler camera in pylon Viewer, see images in notes folder. Alternatively, do the following:
 
-In Pylon Viewer first set **Configuration Sets** to `Default configuration Set`.
-
-Then:
+In Pylon Viewer first set **Configuration Sets** to `Default configuration Set`. Then:
 - In **Analog Controls** set `Gain Auto` -> `Continuous`, and `Gamma Selector` -> `sRGB`. 
 - In **Image Format Controls set** set `Pixel Format` -> `YUV 422 (YUYV) Packed`.
 - In **AOI Controls** set `width` and `height` -> `2900` and `Center X and Y` -> `True`.
@@ -42,6 +40,10 @@ Then:
 
 Now in **Configuration Sets** save to `User Set 1` so that it can be loaded again easily.
 
+For fine tuning:
+- In **Auto Function Parameters** set `Target gray Value` to `50`
+
+If the FPS is very low (sub 5 fps) it could be because there is not enough light and the continuous exposure is turning up the exposure time. To fix this, open up the aperture or use more light in the room.
 
 The camera uses the [pypylon api](https://github.com/basler/pypylon) and this is installed in this docker image.
 

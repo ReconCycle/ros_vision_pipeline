@@ -44,20 +44,27 @@ services:
 
   ros-vision-pipeline:
     container_name: ros-vision-pipeline
-    build: ./build
+    # use ./build if you want CUDA support
+    # build: ./build
+    build: ./build-cpu
     # get output from python scripts to docker log using stdin_open and tty
     stdin_open: true # docker run -i
     tty: true        # docker run -t
     # depends_on:
     #   - ros-master
     environment:
-      # - "ROS_MASTER_URI=http://ros-master:11311"
-      # - "ROS_HOSTNAME=localhost" # must be the container_name
-      # for network_mode: host, do this:
-      - ROS_MASTER_URI=http://10.20.0.1:11311
-      - ROS_IP=10.20.1.131 # $ hostname -I
-      - NVIDIA_VISIBLE_DEVICES=0
-      - NVIDIA_DRIVER_CAPABILITIES=all
+      # to get computer hostname run: hostname -I 
+      # only use IP addresses with docker
+      - "ROS_MASTER_URI=http://192.168.2.20:11311"
+      - "ROS_HOSTNAME=192.168.2.20"
+      #
+      # For ros master on reconcycle-dev2:
+      # - ROS_MASTER_URI=http://10.20.0.1:11311
+      # - ROS_IP=10.20.1.131 # $ hostname -I
+      # 
+      # If the computer has CUDA support:
+      # - NVIDIA_VISIBLE_DEVICES=0
+      # - NVIDIA_DRIVER_CAPABILITIES=all
       - GITHUB_APP_PASSWORD=${GITHUB_APP_PASSWORD} # set this in the .env file
     volumes:
       - ./data:/root/data

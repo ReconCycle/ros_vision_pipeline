@@ -55,12 +55,12 @@ services:
     environment:
       # to get computer hostname run: hostname -I 
       # only use IP addresses with docker
-      - "ROS_MASTER_URI=http://192.168.2.20:11311"
-      - "ROS_HOSTNAME=192.168.2.20"
+      # - "ROS_MASTER_URI=http://192.168.2.20:11311"
+      # - "ROS_HOSTNAME=192.168.2.20"
       #
       # For ros master on reconcycle-dev2:
-      # - ROS_MASTER_URI=http://10.20.0.1:11311
-      # - ROS_IP=10.20.1.131 # $ hostname -I
+      - ROS_MASTER_URI=http://10.20.0.1:11311
+      - ROS_IP=10.20.0.2 # $ hostname -I
       # 
       # If the computer has CUDA support:
       # - NVIDIA_VISIBLE_DEVICES=0

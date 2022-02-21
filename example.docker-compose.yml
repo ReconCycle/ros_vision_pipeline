@@ -1,46 +1,46 @@
 version: '2.4' # 3.8
 
 services:
-  # ros-master:
-  #   container_name: ros-master
-  #   ports: # not necessary, works fine without, only required for host mode 
-  #     - 11311:11311
-  #   image: ros:kinetic
-  #   command: stdbuf -o L roscore
-  #   networks:
-  #     - ros
-  #   restart: unless-stopped
+  ros-master:
+    container_name: ros-master
+    ports: # not necessary, works fine without, only required for host mode 
+      - 11311:11311
+    image: ros:kinetic
+    command: stdbuf -o L roscore
+    networks:
+      - ros
+    restart: unless-stopped
 
-  # novnc:
-  #   image: theasp/novnc:latest
-  #   container_name: novnc
-  #   environment:
-  #     # Adjust to your screen size
-  #     - DISPLAY_WIDTH=1600
-  #     - DISPLAY_HEIGHT=968
-  #     - RUN_XTERM=no
-  #   ports:
-  #     - "8080:8080"
-  #   networks:
-  #     - ros
-  #   restart: unless-stopped
+  novnc:
+    image: theasp/novnc:latest
+    container_name: novnc
+    environment:
+      # Adjust to your screen size
+      - DISPLAY_WIDTH=1600
+      - DISPLAY_HEIGHT=968
+      - RUN_XTERM=no
+    ports:
+      - "8080:8080"
+    networks:
+      - ros
+    restart: unless-stopped
 
-  # ros-rviz:
-  #   container_name: ros-rviz
-  #   build: ./build-rviz
-  #   depends_on:
-  #     # - ros-master
-  #     - novnc
-  #   stdin_open: true # docker run -i
-  #   tty: true        # docker run -t
-  #   environment:
-  #     - "ROS_MASTER_URI=http://reconcycle-dev1:11311"
-  #     - "ROS_HOSTNAME=ros-rviz" # must be the container_name
-  #     - DISPLAY=novnc:0.0
-  #   command: stdbuf -o L rosrun rviz rviz
-  #   networks:
-  #     - ros
-  #   restart: unless-stopped
+  ros-rviz:
+    container_name: ros-rviz
+    build: ./build-rviz
+    depends_on:
+      # - ros-master
+      - novnc
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    environment:
+      - "ROS_MASTER_URI=http://reconcycle-dev1:11311"
+      - "ROS_HOSTNAME=ros-rviz" # must be the container_name
+      - DISPLAY=novnc:0.0
+    command: stdbuf -o L rosrun rviz rviz
+    networks:
+      - ros
+    restart: unless-stopped
 
   ros-vision-pipeline:
     container_name: ros-vision-pipeline
@@ -67,7 +67,6 @@ services:
       # - NVIDIA_DRIVER_CAPABILITIES=all
       - GITHUB_APP_PASSWORD=${GITHUB_APP_PASSWORD} # set this in the .env file
     volumes:
-      - ./data:/root/data
       - $HOME/reconcycle/vision-pipeline:/root/vision-pipeline
     network_mode: host # workaround to use the camera
     command: python ros_pipeline.py --publish_continuously=True

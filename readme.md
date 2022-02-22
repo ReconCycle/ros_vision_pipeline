@@ -1,8 +1,15 @@
 # ROS Package for Vision Pipeline
 
-ROS package that encapsulates the vision pipeline.
+Docker container that encapsulates the vision pipeline and provides ROS nodes for the camera and data out.
 
 ![RViz](./readme_rviz.png)
+
+## General Configuration
+
+This docker container can capture the images from the camera and process them.
+The capturing of the images from the Basler camera and the processing of the images can be done on **separate PCs**.
+
+For faster image processing a Nvida graphics card can be used.
 
 ## Pylon Basler Camera Software Suite on Docker Host Machine
 
@@ -49,12 +56,11 @@ The camera uses the [pypylon api](https://github.com/basler/pypylon) and this is
 
 ## Nvidia GPU Support
 
-
-### Installing Nvidia drivers and CUDA on docker host machine
+These steps are only necessary if the PC has an Nvidia graphics card.
 
 You need to install the Nvidia graphics drivers and the CUDA toolkit. The Nvidia drivers are also bundled with CUDA, but I had trouble installing it this way.
 
-#### **Installing Nvidia graphics drivers**
+### **Installing Nvidia graphics drivers**
 
 Prequisites:
 ```
@@ -64,7 +70,7 @@ Now [download here the nvidia drivers](https://www.nvidia.com/Download/index.asp
 
 - You may need to disable the built in display driver: [disable display driver](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#runfile-nouveau)
 
-#### **Installing CUDA toolkit**
+### **Installing CUDA toolkit**
 
 Install **CUDA 10.2** on your host system. Go to [Cuda Toolkit Archive](https://developer.nvidia.com/cuda-toolkit-archive) then click on **CUDA Toolkit 10.2**. Select your operating system and download the runfile. Run the runfile using `sudo`.
 
@@ -117,46 +123,65 @@ Edit the `docker-compose.yml` file and remove the ROS master and Rviz if you alr
 
 The container is running in `host` mode because this is the easiest way to give it access to the Basler camera. The `ROS_IP` needs to be set correctly. Do this by running `$ hostname -I` on the host and setting the `ROS_IP` to this IP (take the first one if it gives multiple IP addresses).
 
-Clone the [https://github.com/ReconCycle/vision-pipeline](https://github.com/ReconCycle/vision-pipeline) project. ** Cloning this repository requires git LFS.** Set the path of the project in the `volumes` section of the `docker-compose.yml`. This is the path before the ":" sign. Do not change `/root/vision-pipeline`.
+### Cloning [Vision Pipeline Project](https://github.com/ReconCycle/vision-pipeline)
 
-```
+Clone the [https://github.com/ReconCycle/vision-pipeline](https://github.com/ReconCycle/vision-pipeline) project. Set the path of the project in the `volumes` section of the `docker-compose.yml`. This is the path before the ":" sign. Do not change `/root/vision-pipeline`.
+
+```yaml
 volumes:
   - $HOME/projects/vision-pipeline:/root/vision-pipeline
 ```
 
-At some point we might want the project to be cloned automatically  in this docker container (instead of using a volume), and that is what the `.env.sample` file is for. Currently I am not doing this, so you don't need to add an app password to the `.env` file.
+### Specifying CPU or GPU target
 
-### Running
+If you are running a Nvidia GPU and you have configured **nvidia-container-runtime** then you can use the GPU target. If not, you should use CPU.
+
+To set the target, change the following in `docker-compose.yml`:
+
+```yaml
+build:
+    context: ./build-2in1
+    args: 
+    TARGET: cpu # cpu or gpu
+```
+
+## Running The Pipeline and the Camera Publisher
 
 Run:
-```
+```bash
 $ cd ros-vision-pipeline
 $ docker-compose up -d
 ```
 The container should now be running. You can automatically get it to run the pipeline with the following line in the `docker-compose.yml` file.
 ```yaml
-command: python ros_pipeline.py publish_continuously=True
+command: python ros_pipeline.py --publish_continuously=True
+```
+or run the camera with:
+```yaml
+command: python ros_camera_publisher.py
 ```
 If you comment out this line you can bash into the container and try other things. Run:
-```
+```bash
 docker-compose exec ros-vision-pipeline bash
 ```
 You are now inside the docker container. To publish images from the Basler camera run:
-```
+```bash
 python ros_camera_publisher.py
 ```
 You should be able to see the live camera feed in Rviz on the node `/camera/image_color`.
 You can run this on a separate machine using the [ros-basler-camera](https://github.com/ReconCycle/ros-basler-camera) docker image that doesn't have the cuda requirements.
 
-To run the vision-pipeline run:
-```
-python ros_pipeline.py
-```
+The `ros_camera_publisher.py` can take the following arguments:
+
+- `--camera_topic` (default /camera/image_color) the name of the camera topic to subscribe to,
+- `--node_name` (default camera) the name of the node,
+- `--save` (default False) save images to folder,
+- `--undistort` (default True) use the calibration file to undistort the image.
+
 The `ros_pipeline.py` script can take the following arguments:
-- publish_continuously (default False): Publish labelled images and detections continuously
+- `--publish_continuously` (default False) Publish labelled images and detections continuously
                     otherwise create a service.
-- publish_on_service_call (default True): When a service call is received, also publish the
-                    image and detections
+- `--publish_on_service_call` (default True) When a service call is received, also publish the image and detections
 
 Now you should be able to use the following nodes:
 
@@ -170,7 +195,9 @@ The JSON string is a list where each object in the list represents a detection a
 - `score` the detection score. Float in the interval [0, 1] for how confident the model is in the prediction,
 - `obb_corners` the corners of the oriented bounding box in a list of x, y coordinates in meters,
 - `obb_center` x, y coordinates of oriented bounding box center in meters,
-- `obb_rot_quat` rotation quaternion of the oriented bounding box.
+- `obb_rot_quat` rotation quaternion of the oriented bounding box,
+- `tracking_id` the ID given by the object tracker,
+- `tracking_score` the score given by the object tracker.
 
 The list of possible class names is: front, back, side1, side2, battery, pcb, and internals. Where: front, back, side1, and side2, correspond to the poses of the h.c.a.
 
@@ -180,7 +207,7 @@ bool success
 sensor_msgs/Image image
 string detections
 ```
-This has been defined in `build/ros_vision_pipeline_srv/Detection.srv`.
+This has been defined in `build/ros_vision_pipeline/Detection.srv`.
 
 ## Resources
 

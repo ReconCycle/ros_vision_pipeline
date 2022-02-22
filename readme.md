@@ -206,6 +206,28 @@ string detections
 ```
 This has been defined in `build/ros_vision_pipeline/Detection.srv`.
 
+## Camera Calibration
+
+To calibrate the camera put a checkerboard in the view of the camera, and move the checkerboard around while taking images. The images should be of size 2900 x 2900 pixels.
+To take the images for calibration run the following in the container:
+```yaml
+command: python ros_camera_publisher.py --save=True --undistort=False --fps=1.0
+```
+Rename the saved folder to something like "calibration_23-06-2021" and move it to the data folder.
+Then run the calibration by running:
+```yaml
+command: python image_calibration.py --input="data/calibration_23-06-2021" --board_h=9 --board_w=6
+```
+This will output the file: `calibration_file.yaml` and some `temp_*` folders to check it performed correctly. 
+
+Set the new `calibration_file.yaml` path in `config.yaml`.
+
+The `image_calibration.py` can take the following parameters:
+
+- `--board_h` (default 8) the board height
+- `--board_w` (default 6) the board width
+- `--input` (default data/calibration) input directory of images
+
 ## Resources
 
 Python with ROS:

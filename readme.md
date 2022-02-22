@@ -158,18 +158,15 @@ command: python ros_pipeline.py --publish_continuously=True
 ```
 or run the camera with:
 ```yaml
-command: python ros_camera_publisher.py
+command: python ros_camera_publisher.py --save=True
 ```
-If you comment out this line you can bash into the container and try other things. Run:
+If you want bash access to the container, run:
 ```bash
-docker-compose exec ros-vision-pipeline bash
+$ docker-compose exec ros-vision-pipeline bash
 ```
-You are now inside the docker container. To publish images from the Basler camera run:
-```bash
-python ros_camera_publisher.py
-```
+
 You should be able to see the live camera feed in Rviz on the node `/camera/image_color`.
-You can run this on a separate machine using the [ros-basler-camera](https://github.com/ReconCycle/ros-basler-camera) docker image that doesn't have the cuda requirements.
+You can run rviz using the [ros-basler-camera](https://github.com/ReconCycle/ros-basler-camera) docker image.
 
 The `ros_camera_publisher.py` can take the following arguments:
 

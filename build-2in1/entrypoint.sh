@@ -19,7 +19,7 @@ echo "activating pipeline-v2 conda env"
 conda activate pipeline-v2
 
 #check if we have already cloned the project. If not do it now.
-if [ ! -d "$CATKIN_WS/src/ros-vision-pipeline/vision-pipeline" ]; then
+if [ ! -d "/root/vision-pipeline" ]; then
     echo "You need to manually clone the github.com/ReconCycle/vision-pipeline repo and add it as a volume in docker."
     # cd $CATKIN_WS/src/ros-vision-pipeline \
     #     && git clone https://$GITHUB_APP_PASSWORD@github.com/ReconCycle/vision-pipeline.git
@@ -29,6 +29,12 @@ fi
 if ! pip list | grep -F deeplabcut &> /dev/null; then
     echo "installing deeplabcut..."
     cd /root/vision-pipeline/dlc/DeepLabCut-2.2b8 && ./reinstall.sh
+fi
+
+# install yolact_pkg
+if ! pip list | grep -F yolact &> /dev/null; then
+    echo "installing yolact..."
+    cd /root/vision-pipeline/yolact_pkg && python -m pip install -e .
 fi
 
 cd /root/vision-pipeline

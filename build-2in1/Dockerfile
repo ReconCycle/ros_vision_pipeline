@@ -92,20 +92,25 @@ ENV ROS_PYTHON_VERSION=3
 RUN mkdir -p $CATKIN_WS/src/ros_vision_pipeline
 WORKDIR $CATKIN_WS
 
-# COPY environment.yml $CATKIN_WS/src/ros_vision_pipeline
-# RUN cd $CATKIN_WS/src/ros_vision_pipeline && conda env create -f environment.yml --debug
+COPY environment.yml $CATKIN_WS/src/ros_vision_pipeline
+RUN cd $CATKIN_WS/src/ros_vision_pipeline && conda env create -f environment.yml --debug
 
-COPY spec-file.txt $CATKIN_WS/src/ros_vision_pipeline
-RUN cd $CATKIN_WS/src/ros_vision_pipeline && conda create -n pipeline-v2 --file spec-file.txt --debug
+# maybe we can use mamba to make things faster? (untested)
+# RUN cd $CATKIN_WS/src/ros_vision_pipeline \
+#     && conda create -y -n pipeline-v2 \
+#     && conda activate pipeline-v2 \
+#     && conda install mamba -n base -c conda-forge \
+#     && mamba env update -n pipeline-v2 --file environment.yml
+
+# using spec-file doesn't include pip packages!!!
+# COPY spec-file.txt $CATKIN_WS/src/ros_vision_pipeline
+# RUN cd $CATKIN_WS/src/ros_vision_pipeline && conda create -n pipeline-v2 --file spec-file.txt --debug
 
 # install pypylon from wheel
 COPY pypylon-1.6.0-cp37-cp37m-linux_x86_64.whl /root
 RUN conda run -n pipeline-v2 pip3 install /root/pypylon-1.6.0-cp37-cp37m-linux_x86_64.whl
 
 COPY ros_vision_pipeline $CATKIN_WS/src/ros_vision_pipeline
-RUN chmod +x $CATKIN_WS/src/ros_vision_pipeline/scripts/*.py
-
-RUN conda run -n pipeline-v2 pip3 install empy
 
 # Initialize local catkin workspace
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \

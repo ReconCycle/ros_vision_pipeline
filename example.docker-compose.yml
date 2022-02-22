@@ -72,7 +72,6 @@ services:
       # If the computer has CUDA support:
       # - NVIDIA_VISIBLE_DEVICES=0
       # - NVIDIA_DRIVER_CAPABILITIES=all
-      - GITHUB_APP_PASSWORD=${GITHUB_APP_PASSWORD} # set this in the .env file
     volumes:
       - $HOME/reconcycle/vision-pipeline:/root/vision-pipeline
     network_mode: host # workaround to use the camera

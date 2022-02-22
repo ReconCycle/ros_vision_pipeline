@@ -44,9 +44,16 @@ services:
 
   ros-vision-pipeline:
     container_name: ros-vision-pipeline
-    # use ./build if you want CUDA support
-    # build: ./build
-    build: ./build-cpu
+    # build depends on if you want CUDA support, which is only available with an nvidia GPU.
+    # export DOCKER_BUILDKIT=1 # or configure in daemon.json
+    # docker-compose build --build-arg 'TARGET=gpu'
+    # or:
+    # docker-compose build --build-arg 'TARGET=cpu'
+    build:
+      context: ./build-2in1
+      args: 
+        TARGET: cpu # cpu or gpu
+
     # get output from python scripts to docker log using stdin_open and tty
     stdin_open: true # docker run -i
     tty: true        # docker run -t

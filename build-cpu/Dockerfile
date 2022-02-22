@@ -137,6 +137,10 @@ RUN rm /opt/ros/kinetic/lib/python2.7/dist-packages/cv2.so
 # Always source ros_catkin_entrypoint.sh when launching bash (e.g. when attaching to container)
 RUN echo "source /entrypoint.sh" >> /root/.bashrc
 
+RUN conda run -n pipeline-v2 pip3 install rich
+RUN conda run -n pipeline-v2 pip3 install backbone
+RUN conda run -n pipeline-v2 pip3 install commentjson
+
 COPY ./entrypoint.sh /
 RUN chmod +x /entrypoint.sh
 

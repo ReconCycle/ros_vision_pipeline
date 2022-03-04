@@ -80,6 +80,35 @@ services:
     #   - ros
     restart: unless-stopped
 
+  ros-image-publisher:
+    container_name: ros-image-publisher
+    build:
+      context: ./build-2in1
+      args: 
+        TARGET: cpu # cpu or gpu
+    # get output from python scripts to docker log using stdin_open and tty
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    # depends_on:
+    #   - ros-master
+    environment:
+      # to get computer hostname run: hostname -I 
+      # only use IP addresses with docker
+      # - "ROS_MASTER_URI=http://192.168.2.20:11311"
+      # - "ROS_HOSTNAME=192.168.2.20"
+      #
+      # For ros master on reconcycle-dev2:
+      - ROS_MASTER_URI=http://172.17.0.1:11311
+      - ROS_IP=172.17.0.1 # $ hostname -I
+    volumes:
+      - $HOME/projects/reconcycle/vision-pipeline:/root/vision-pipeline
+      - $HOME/datasets/labelme/2022-02-17_kalo_tracking:/root/images
+    network_mode: host # workaround to use the camera
+    command: python ros_image_publisher.py --img_folder=/root/images
+    # networks:
+    #   - ros
+    restart: unless-stopped
+
 networks:
   ros:
     driver: bridge

@@ -1,0 +1,2 @@
+sensor_msgs/Image colour_image
+sensor_msgs/Image depth_image

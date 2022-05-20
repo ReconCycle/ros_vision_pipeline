@@ -1,9 +1,9 @@
-# use ubuntu 16.04 because we want to use ROS kinetic
+# use ubuntu 20.04 because we want to use ROS noetic
 ARG TARGET="gpu"
-FROM nvidia/cuda:10.2-cudnn7-devel-ubuntu16.04 as gpu
-FROM ubuntu:16.04 as cpu
+FROM nvidia/cuda:11.3.1-cudnn8-devel-ubuntu20.04 as gpu
+FROM ubuntu:20.04 as cpu
 
-# FROM ros:kinetic
+# FROM ros:noetic
 LABEL maintainer "Sebastian Ruiz <sruiz@mailbox.org>"
 
 SHELL ["/bin/bash","-c"]
@@ -12,8 +12,15 @@ SHELL ["/bin/bash","-c"]
 ## BEGIN: ros:core
 ################################################################
 
+# setup timezone
+RUN echo 'Etc/UTC' > /etc/timezone && \
+    ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime && \
+    apt-get update && \
+    apt-get install -q -y --no-install-recommends tzdata && \
+    rm -rf /var/lib/apt/lists/*
+
 # install packages
-RUN apt-get update && apt-get install -q -y --no-install-recommends \
+RUN apt update && apt install -q -y --no-install-recommends \
     dirmngr \
     gnupg2 \
     && rm -rf /var/lib/apt/lists/*
@@ -22,28 +29,28 @@ RUN apt-get update && apt-get install -q -y --no-install-recommends \
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
 
 # setup sources.list
-RUN echo "deb http://packages.ros.org/ros/ubuntu xenial main" > /etc/apt/sources.list.d/ros1-latest.list
+RUN echo "deb http://packages.ros.org/ros/ubuntu focal main" > /etc/apt/sources.list.d/ros1-latest.list
 
 # setup environment
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
-ENV ROS_DISTRO kinetic
+ENV ROS_DISTRO noetic
 
 ################################################################
 ## END: ros:core
-## BEGIN: ros:kinetic
+## BEGIN: ros:noetic
 ################################################################
 
 # install ros packages
-RUN apt-get update && apt-get install --no-install-recommends -y \
-    ros-kinetic-ros-core=1.3.2-0* \
+RUN apt update && apt install --no-install-recommends -y \
+    ros-noetic-ros-core=1.5.0-1* \
     build-essential \
-    python-rosdep \
-    python-rosinstall \
-    python-vcstools \
-    python-catkin-tools \
-    ros-kinetic-cv-bridge \
+    python3-rosdep \
+    python3-rosinstall \
+    python3-vcstools \
+    python3-catkin-tools \
+    ros-noetic-cv-bridge \
     vim \
     && rm -rf /var/lib/apt/lists/*
 
@@ -52,39 +59,90 @@ RUN rosdep init && \
   rosdep update --rosdistro $ROS_DISTRO
 
 # install ros packages
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ros-kinetic-ros-base=1.3.2-0* \
+RUN apt update && apt install -y --no-install-recommends \
+    ros-noetic-ros-base=1.5.0-1* \
     && rm -rf /var/lib/apt/lists/*
 
 ################################################################
-## END: ros:kinetic
+## END: ros:noetic
 ## BEGIN: anaconda3
 ################################################################
 
-ENV PATH /opt/conda/bin:$PATH
+# ENV PATH /opt/conda/bin:$PATH
 
-RUN apt-get update --fix-missing && apt-get install -y wget bzip2 ca-certificates \
-    libglib2.0-0 libxext6 libsm6 libxrender1 \
-    git mercurial subversion
+RUN apt update && apt install -y \
+    software-properties-common
+RUN add-apt-repository universe
 
-RUN wget --quiet https://repo.anaconda.com/archive/Anaconda3-2020.11-Linux-x86_64.sh -O ~/anaconda.sh && \
-    /bin/bash ~/anaconda.sh -b -p /opt/conda && \
-    rm ~/anaconda.sh && \
-    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
-    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
-    echo "conda activate base" >> ~/.bashrc
+RUN apt update --fix-missing && apt install -y wget bzip2 ca-certificates zlib1g-dev libncurses5-dev libgdbm-dev \
+    libglib2.0-0 libxext6 libsm6 libxrender1 libffi-dev \
+    git
 
-RUN conda config --add channels conda-forge
-RUN conda config --set channel_priority false
-# RUN conda config --set allow_conda_downgrades true # not working
+RUN wget https://www.python.org/ftp/python/3.8.13/Python-3.8.13.tgz
+RUN tar -xf Python-3.8.13.tgz \
+    && cd Python-3.8.13 \
+    && ./configure --enable-optimizations
+
+RUN cd Python-3.8.13 && make -j 16 \
+    && make install
+
+RUN apt update && apt install -y python3-pip
+RUN pip3 install --upgrade pip
+
+# RUN if [ "$TARGET" = "gpu" ] ; then \
+#        pip3 install torch torchvision --extra-index-url https://download.pytorch.org/whl/cu113  \
+#     else \
+#        pip3 install torch torchvision \
+#     fi
+
+RUN pip3 install torch torchvision --extra-index-url https://download.pytorch.org/whl/cu113
+
+# RUN pip3 install torch torchvision
+
+RUN pip3 install rich matplotlib numpy pillow scikit-learn scipy tensorboard pyyaml opencv-python regex natsort shapely commentjson pycocotools cython scikit-image pyrealsense2 hdbscan
+RUN pip3 install lap cython_bbox
+
+RUN apt install -y libpcre2-dev
+COPY swig-4.0.2.tar.gz /
+RUN tar -xf /swig-4.0.2.tar.gz
+RUN cd /swig-4.0.2 && ./configure --without-pcre && make && make install
+
+##############
+# install pylon from source
+##############
+# COPY pylon_6.3.0.23157-deb0_amd64.deb /
+# RUN dpkg -i pylon_6.3.0.23157-deb0_amd64.deb && apt install -f
+
+# RUN git clone https://github.com/basler/pypylon.git
+# RUN cd pypylon \
+#     && pip3 install .
+##############
+RUN pip3 install pypylon
 
 ################################################################
 ## END: anaconda3
 ################################################################
 
-RUN apt-get update && apt-get install -y \
-    software-properties-common
-RUN add-apt-repository universe
+# trying to get glibc running because it is required for open3d.
+# not working, so instead, not using open3d for now
+# https://stackoverflow.com/a/55663007
+# RUN apt install -y gawk bison
+
+# COPY glibc-2.27.tar.gz /
+# RUN tar -xf /glibc-2.27.tar.gz
+# RUN cd /glibc-2.27 \
+#     && mkdir build \
+#     && cd build \
+#     && ../configure --prefix=/opt/glibc-2.27 \
+#     && make -j8 \
+#     && make install
+
+# COPY patchelf-0.14.5-x86_64.tar.gz /
+# # this run commands untars the executable into /bin folder
+# RUN tar -xf /patchelf-0.14.5-x86_64.tar.gz
+# RUN patchelf --set-interpreter /opt/glibc-2.27/lib/ld-linux-x86-64.so.2 --set-rpath /opt/glibc-2.27/lib/ /usr/local/bin/python3
+################################################################
+
 
 # Create local catkin workspace
 ENV CATKIN_WS=/root/catkin_ws
@@ -92,23 +150,6 @@ ENV ROS_PYTHON_VERSION=3
 RUN mkdir -p $CATKIN_WS/src/ros_vision_pipeline
 WORKDIR $CATKIN_WS
 
-COPY environment.yml $CATKIN_WS/src/ros_vision_pipeline
-RUN cd $CATKIN_WS/src/ros_vision_pipeline && conda env create -f environment.yml --debug
-
-# maybe we can use mamba to make things faster? (untested)
-# RUN cd $CATKIN_WS/src/ros_vision_pipeline \
-#     && conda create -y -n pipeline-v2 \
-#     && conda activate pipeline-v2 \
-#     && conda install mamba -n base -c conda-forge \
-#     && mamba env update -n pipeline-v2 --file environment.yml
-
-# using spec-file doesn't include pip packages!!!
-# COPY spec-file.txt $CATKIN_WS/src/ros_vision_pipeline
-# RUN cd $CATKIN_WS/src/ros_vision_pipeline && conda create -n pipeline-v2 --file spec-file.txt --debug
-
-# install pypylon from wheel
-COPY pypylon-1.6.0-cp37-cp37m-linux_x86_64.whl /root
-RUN conda run -n pipeline-v2 pip3 install /root/pypylon-1.6.0-cp37-cp37m-linux_x86_64.whl
 
 COPY ros_vision_pipeline $CATKIN_WS/src/ros_vision_pipeline
 
@@ -117,22 +158,42 @@ RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
     && cd $CATKIN_WS \
     && rosdep install -y --from-paths . --ignore-src --rosdistro ${ROS_DISTRO}
 
+RUN update-alternatives --remove python /usr/bin/python \
+    && update-alternatives --install /usr/bin/python python /usr/local/bin/python3 10
+
+# required for pyrealsense2
+RUN apt install -y libusb-1.0-0-dev
+RUN pip3 install rospkg
+
+########## realsense install
+
+RUN apt install -y apt-transport-https
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE || sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE \
+    && add-apt-repository "deb https://librealsense.intel.com/Debian/apt-repo $(lsb_release -cs) main" -u
+RUN apt install -y librealsense2-dkms librealsense2-utils librealsense2-dev usbutils
+
+########## end realsense install
+
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
     && cd $CATKIN_WS \
     && catkin init \
-    && catkin config -DPYTHON_EXECUTABLE=/opt/conda/envs/pipeline-v2/bin/python3 -DPYTHON_INCLUDE_DIR=/opt/conda/envs/pipeline-v2/include/python3.7m -DPYTHON_LIBRARY=/opt/conda/envs/pipeline-v2/lib/libpython3.7m.so \
-    && catkin config --install \
-    && cd src \
-    && git clone -b kinetic https://github.com/ros-perception/vision_opencv.git
+    # && catkin config -DPYTHON_EXECUTABLE=/usr/local/bin/python3.8 \
+    # && catkin config -DPYTHON_EXECUTABLE=/usr/local/bin/python3 -DPYTHON_INCLUDE_DIR=/usr/local/include/python3.8 -DPYTHON_LIBRARY=/usr/local/lib/libpython3.8.a \
+    && catkin config --install
+    # && cd src \
+    # && git clone -b noetic https://github.com/ros-perception/vision_opencv.git
 
 # cv_bridge fix
-RUN sed -i 's/python3/python-py35/g' src/vision_opencv/cv_bridge/CMakeLists.txt
+# RUN sed -i 's/python3/python-py38/g' src/vision_opencv/cv_bridge/CMakeLists.txt
 
-RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
-    && cd $CATKIN_WS \
-    && catkin build cv_bridge -DSETUPTOOLS_DEB_LAYOUT=OFF \ 
-    # I was getting some error without -DSETUPTOOLS_DEB_LAYOUT=OFF
-    && source install/setup.bash --extend
+# RUN apt install -y python3-empy
+RUN pip3 install empy
+
+# RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
+#     && cd $CATKIN_WS \
+#     && catkin build cv_bridge -DSETUPTOOLS_DEB_LAYOUT=OFF \ 
+#     # I was getting some error without -DSETUPTOOLS_DEB_LAYOUT=OFF
+#     && source install/setup.bash --extend
 
 # install ros_vision_pipeline
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
@@ -141,7 +202,7 @@ RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
     # catkin install doesn't seem to do anything?
 
 # ROS breaks opencv because python3 will try and default to the python2.7 version of opencv. Delete it.
-RUN rm /opt/ros/kinetic/lib/python2.7/dist-packages/cv2.so
+# RUN rm /opt/ros/kinetic/lib/python2.7/dist-packages/cv2.so
 
 # Always source ros_catkin_entrypoint.sh when launching bash (e.g. when attaching to container)
 RUN echo "source /entrypoint.sh" >> /root/.bashrc
@@ -151,5 +212,5 @@ RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-# stop docker from exiting immediately
-CMD tail -f /dev/null 
+# # stop docker from exiting immediately
+CMD tail -f /dev/null

@@ -72,9 +72,9 @@ Now [download here the nvidia drivers](https://www.nvidia.com/Download/index.asp
 
 ### **Installing CUDA toolkit**
 
-Install **CUDA 10.2** on your host system. Go to [Cuda Toolkit Archive](https://developer.nvidia.com/cuda-toolkit-archive) then click on **CUDA Toolkit 10.2**. Select your operating system and download the runfile. Run the runfile using `sudo`.
+Install **CUDA 11.3** on your host system. Go to [Cuda Toolkit Archive](https://developer.nvidia.com/cuda-toolkit-archive) then click on **CUDA Toolkit 11.3**. Select your operating system and download the runfile. Run the runfile using `sudo`.
 
-- You may need gcc version 8 to run CUDA 10.2. If so, run: `sudo apt install gcc-8 g++-8`. [Guide here](https://linuxize.com/post/how-to-install-gcc-on-ubuntu-20-04/) on how to switch gcc versions.
+- You may need gcc version 8 to run CUDA 11.3. If so, run: `sudo apt install gcc-8 g++-8`. [Guide here](https://linuxize.com/post/how-to-install-gcc-on-ubuntu-20-04/) on how to switch gcc versions.
 
 There is an installation guide for CUDA from nvidia [here](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#runfile-installation). You can have a look at it for reference.
 

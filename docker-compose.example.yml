@@ -1,46 +1,46 @@
 version: '2.4' # 3.8
 
 services:
-  ros-master:
-    container_name: ros-master
-    ports: # not necessary, works fine without, only required for host mode 
-      - 11311:11311
-    image: ros:kinetic
-    command: stdbuf -o L roscore
-    networks:
-      - ros
-    restart: unless-stopped
+  #ros-master:
+  #  container_name: ros-master
+  #  ports: # not necessary, works fine without, only required for host mode 
+  #    - 11311:11311
+  #  image: ros:kinetic
+  #  command: stdbuf -o L roscore
+  #  networks:
+  #    - ros
+  #  restart: unless-stopped
 
-  novnc:
-    image: theasp/novnc:latest
-    container_name: novnc
-    environment:
-      # Adjust to your screen size
-      - DISPLAY_WIDTH=1600
-      - DISPLAY_HEIGHT=968
-      - RUN_XTERM=no
-    ports:
-      - "8080:8080"
-    networks:
-      - ros
-    restart: unless-stopped
+  #novnc:
+  #  image: theasp/novnc:latest
+  #  container_name: novnc
+  #  environment:
+  #    # Adjust to your screen size
+  #    - DISPLAY_WIDTH=1600
+  #    - DISPLAY_HEIGHT=968
+  #    - RUN_XTERM=no
+  #  ports:
+  #    - "8080:8080"
+  #  networks:
+  #    - ros
+  #  restart: unless-stopped
 
-  ros-rviz:
-    container_name: ros-rviz
-    build: ./build-rviz
-    depends_on:
-      # - ros-master
-      - novnc
-    stdin_open: true # docker run -i
-    tty: true        # docker run -t
-    environment:
-      - "ROS_MASTER_URI=http://reconcycle-dev1:11311"
-      - "ROS_HOSTNAME=ros-rviz" # must be the container_name
-      - DISPLAY=novnc:0.0
-    command: stdbuf -o L rosrun rviz rviz
-    networks:
-      - ros
-    restart: unless-stopped
+  #ros-rviz:
+  #  container_name: ros-rviz
+  #  build: ./build-rviz
+  #  depends_on:
+  #    # - ros-master
+  #    - novnc
+  #  stdin_open: true # docker run -i
+  #  tty: true        # docker run -t
+  #  environment:
+  #    - "ROS_MASTER_URI=http://reconcycle-dev1:11311"
+  #    - "ROS_HOSTNAME=ros-rviz" # must be the container_name
+  #    - DISPLAY=novnc:0.0
+  #  command: stdbuf -o L rosrun rviz rviz
+  #  networks:
+  #    - ros
+  #  restart: unless-stopped
 
   ros-vision-pipeline:
     container_name: ros-vision-pipeline
@@ -80,34 +80,34 @@ services:
     #   - ros
     restart: unless-stopped
 
-  ros-image-publisher:
-    container_name: ros-image-publisher
-    build:
-      context: ./build-2in1
-      args: 
-        TARGET: cpu # cpu or gpu
-    # get output from python scripts to docker log using stdin_open and tty
-    stdin_open: true # docker run -i
-    tty: true        # docker run -t
-    # depends_on:
-    #   - ros-master
-    environment:
-      # to get computer hostname run: hostname -I 
-      # only use IP addresses with docker
-      # - "ROS_MASTER_URI=http://192.168.2.20:11311"
-      # - "ROS_HOSTNAME=192.168.2.20"
-      #
-      # For ros master on reconcycle-dev2:
-      - ROS_MASTER_URI=http://172.17.0.1:11311
-      - ROS_IP=172.17.0.1 # $ hostname -I
-    volumes:
-      - $HOME/projects/reconcycle/vision-pipeline:/root/vision-pipeline
-      - $HOME/datasets/labelme/2022-02-17_kalo_tracking:/root/images
-    network_mode: host # workaround to use the camera
-    command: python ros_image_publisher.py --img_folder=/root/images
+  #ros-image-publisher:
+  #  container_name: ros-image-publisher
+  #  build:
+  #    context: ./build-2in1
+  #    args: 
+  #      TARGET: cpu # cpu or gpu
+  #  # get output from python scripts to docker log using stdin_open and tty
+  #  stdin_open: true # docker run -i
+  #  tty: true        # docker run -t
+  #  # depends_on:
+  #  #   - ros-master
+  #  environment:
+  #    # to get computer hostname run: hostname -I 
+  #    # only use IP addresses with docker
+  #    # - "ROS_MASTER_URI=http://192.168.2.20:11311"
+  #    # - "ROS_HOSTNAME=192.168.2.20"
+  #    #
+  #    # For ros master on reconcycle-dev2:
+  #    - ROS_MASTER_URI=http://172.17.0.1:11311
+  #    - ROS_IP=172.17.0.1 # $ hostname -I
+  #  volumes:
+  #    - $HOME/projects/reconcycle/vision-pipeline:/root/vision-pipeline
+  #    - $HOME/datasets/labelme/2022-02-17_kalo_tracking:/root/images
+  #  network_mode: host # workaround to use the camera
+  #  command: python ros_image_publisher.py --img_folder=/root/images
     # networks:
     #   - ros
-    restart: unless-stopped
+  #  restart: unless-stopped
 
 networks:
   ros:

@@ -1,4 +1,6 @@
 .env
-docker-compose.yml
-docker-compose.yaml
 *.swp
+*.yml
+*.yaml
+!docker-compose.example.yml
+!docker-compose.example.yaml

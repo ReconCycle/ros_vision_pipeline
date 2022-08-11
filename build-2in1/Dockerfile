@@ -39,13 +39,31 @@ ENV ROS_DISTRO noetic
 
 ################################################################
 ## END: ros:core
+## BEGIN: python3
+################################################################
+
+RUN apt update && apt install --no-install-recommends -y \
+    software-properties-common \
+    build-essential
+RUN add-apt-repository universe
+
+RUN apt update --fix-missing && apt install -y wget bzip2 ca-certificates zlib1g-dev libncurses5-dev libgdbm-dev \
+    libglib2.0-0 libxext6 libsm6 libxrender1 libffi-dev \
+    git \
+    libusb-1.0-0-dev
+
+RUN apt update && apt install -y python3-pip
+RUN pip3 install --upgrade pip
+
+################################################################
+## END: python3
 ## BEGIN: ros:noetic
 ################################################################
 
 # install ros packages
 RUN apt update && apt install --no-install-recommends -y \
     ros-noetic-ros-core=1.5.0-1* \
-    build-essential \
+    ros-noetic-ros-base=1.5.0-1* \
     python3-rosdep \
     python3-rosinstall \
     python3-vcstools \
@@ -58,36 +76,10 @@ RUN apt update && apt install --no-install-recommends -y \
 RUN rosdep init && \
   rosdep update --rosdistro $ROS_DISTRO
 
-# install ros packages
-RUN apt update && apt install -y --no-install-recommends \
-    ros-noetic-ros-base=1.5.0-1* \
-    && rm -rf /var/lib/apt/lists/*
-
 ################################################################
 ## END: ros:noetic
-## BEGIN: anaconda3
+## BEGIN: python packages
 ################################################################
-
-# ENV PATH /opt/conda/bin:$PATH
-
-RUN apt update && apt install -y \
-    software-properties-common
-RUN add-apt-repository universe
-
-RUN apt update --fix-missing && apt install -y wget bzip2 ca-certificates zlib1g-dev libncurses5-dev libgdbm-dev \
-    libglib2.0-0 libxext6 libsm6 libxrender1 libffi-dev \
-    git
-
-RUN wget https://www.python.org/ftp/python/3.8.13/Python-3.8.13.tgz
-RUN tar -xf Python-3.8.13.tgz \
-    && cd Python-3.8.13 \
-    && ./configure --enable-optimizations
-
-RUN cd Python-3.8.13 && make -j 16 \
-    && make install
-
-RUN apt update && apt install -y python3-pip
-RUN pip3 install --upgrade pip
 
 # RUN if [ "$TARGET" = "gpu" ] ; then \
 #        pip3 install torch torchvision --extra-index-url https://download.pytorch.org/whl/cu113  \
@@ -102,54 +94,23 @@ RUN pip3 install torch torchvision --extra-index-url https://download.pytorch.or
 RUN pip3 install rich matplotlib numpy pillow scikit-learn scipy tensorboard pyyaml opencv-python regex natsort shapely commentjson pycocotools cython scikit-image pyrealsense2 hdbscan
 RUN pip3 install lap cython_bbox
 
-RUN apt install -y libpcre2-dev
-COPY swig-4.0.2.tar.gz /
-RUN tar -xf /swig-4.0.2.tar.gz
-RUN cd /swig-4.0.2 && ./configure --without-pcre && make && make install
+################################################################
+## END: python packages
+## BEGIN: pypylon
+################################################################
 
-##############
-# install pylon from source
-##############
-# COPY pylon_6.3.0.23157-deb0_amd64.deb /
-# RUN dpkg -i pylon_6.3.0.23157-deb0_amd64.deb && apt install -f
-
-# RUN git clone https://github.com/basler/pypylon.git
-# RUN cd pypylon \
-#     && pip3 install .
-##############
 RUN pip3 install pypylon
 
 ################################################################
-## END: anaconda3
+## END: pypylon
+## BEGIN: ROS
 ################################################################
-
-# trying to get glibc running because it is required for open3d.
-# not working, so instead, not using open3d for now
-# https://stackoverflow.com/a/55663007
-# RUN apt install -y gawk bison
-
-# COPY glibc-2.27.tar.gz /
-# RUN tar -xf /glibc-2.27.tar.gz
-# RUN cd /glibc-2.27 \
-#     && mkdir build \
-#     && cd build \
-#     && ../configure --prefix=/opt/glibc-2.27 \
-#     && make -j8 \
-#     && make install
-
-# COPY patchelf-0.14.5-x86_64.tar.gz /
-# # this run commands untars the executable into /bin folder
-# RUN tar -xf /patchelf-0.14.5-x86_64.tar.gz
-# RUN patchelf --set-interpreter /opt/glibc-2.27/lib/ld-linux-x86-64.so.2 --set-rpath /opt/glibc-2.27/lib/ /usr/local/bin/python3
-################################################################
-
 
 # Create local catkin workspace
 ENV CATKIN_WS=/root/catkin_ws
 ENV ROS_PYTHON_VERSION=3
 RUN mkdir -p $CATKIN_WS/src/ros_vision_pipeline
 WORKDIR $CATKIN_WS
-
 
 COPY ros_vision_pipeline $CATKIN_WS/src/ros_vision_pipeline
 
@@ -158,21 +119,38 @@ RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
     && cd $CATKIN_WS \
     && rosdep install -y --from-paths . --ignore-src --rosdistro ${ROS_DISTRO}
 
-RUN update-alternatives --remove python /usr/bin/python \
-    && update-alternatives --install /usr/bin/python python /usr/local/bin/python3 10
+# RUN update-alternatives --remove python /usr/bin/python \
+#     && update-alternatives --install /usr/bin/python python /usr/local/bin/python3 10
+
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 
 # required for pyrealsense2
-RUN apt install -y libusb-1.0-0-dev
 RUN pip3 install rospkg
 
-########## realsense install
+################################################################
+## END: ROS
+## BEGIN: realsense
+################################################################
 
 RUN apt install -y apt-transport-https
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE || sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE \
     && add-apt-repository "deb https://librealsense.intel.com/Debian/apt-repo $(lsb_release -cs) main" -u
 RUN apt install -y librealsense2-dkms librealsense2-utils librealsense2-dev usbutils
 
-########## end realsense install
+################################################################
+## END: realsense
+## BEGIN: ROS (again?)
+################################################################
+
+# these msgs were also used for pylon camera driver, so let's also add them
+RUN cd $CATKIN_WS/src \
+    && git clone https://github.com/dragandbot/dragandbot_common.git
+
+# get message and service definitions for interacting with the pylon camera driver
+RUN cd $CATKIN_WS/src \
+    && git clone https://github.com/basler/pylon-ros-camera.git \
+    && mv pylon-ros-camera/camera_control_msgs . \
+    && rm -rf pylon-ros-camera
 
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
     && cd $CATKIN_WS \
@@ -197,12 +175,16 @@ RUN pip3 install empy
 
 # install ros_vision_pipeline
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
-    && catkin build ros_vision_pipeline
+    && catkin build
     # && catkin install
     # catkin install doesn't seem to do anything?
 
 # ROS breaks opencv because python3 will try and default to the python2.7 version of opencv. Delete it.
 # RUN rm /opt/ros/kinetic/lib/python2.7/dist-packages/cv2.so
+
+################################################################
+## END: ROS (again?)
+################################################################
 
 # Always source ros_catkin_entrypoint.sh when launching bash (e.g. when attaching to container)
 RUN echo "source /entrypoint.sh" >> /root/.bashrc

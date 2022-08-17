@@ -40,6 +40,12 @@ if ! pip3 list | grep -F yolact &> /dev/null; then
     cd /root/vision-pipeline/yolact_pkg && python3 -m pip install -e .
 fi
 
+# install context_action_framework
+if ! pip3 list | grep -F context_action_framework &> /dev/null; then
+    echo "installing context_action_framework..."
+    cd /root/context_action_framework && python3 -m pip install -e .
+fi
+
 cd /root/vision-pipeline
 
 exec "$@"

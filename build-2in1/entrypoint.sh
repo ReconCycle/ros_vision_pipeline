@@ -44,12 +44,12 @@ fi
 DIR=/root/catkin_ws/src/context_action_framework
 if [ -d "$DIR" ]; then
     # install python package
-    if ! pip3 list | grep -F context_action_framework &> /dev/null; then
-        echo "installing context_action_framework..."
-        cd $DIR && python3 -m pip install -e .
-    fi
+    # if ! pip3 list | grep -F context_action_framework &> /dev/null; then
+    #     echo "installing context_action_framework..."
+    #     cd $DIR && python3 -m pip install -e .
+    # fi
 
-    # install ros package
+    # install ros package, which also installs python package
     if ! rospack list-names | grep -F context_action_framework &> /dev/null; then
         echo "installing context_action_framework catkin package..."
         cd /root/catkin_ws && catkin build && catkin config --install

@@ -41,9 +41,22 @@ if ! pip3 list | grep -F yolact &> /dev/null; then
 fi
 
 # install context_action_framework
-if ! pip3 list | grep -F context_action_framework &> /dev/null; then
-    echo "installing context_action_framework..."
-    cd /root/context_action_framework && python3 -m pip install -e .
+DIR=/root/catkin_ws/src/context_action_framework
+if [ -d "$DIR" ]; then
+    # install python package
+    if ! pip3 list | grep -F context_action_framework &> /dev/null; then
+        echo "installing context_action_framework..."
+        cd $DIR && python3 -m pip install -e .
+    fi
+
+    # install ros package
+    if ! rospack list-names | grep -F context_action_framework &> /dev/null; then
+        echo "installing context_action_framework catkin package..."
+        cd /root/catkin_ws && catkin build && catkin config --install
+        source "/opt/ros/$ROS_DISTRO/setup.bash" && source "$CATKIN_WS/devel/setup.bash" && source "$CATKIN_WS/install/setup.bash"
+        # reload rospack
+        cd /root/catkin_ws && rospack profile
+    fi
 fi
 
 cd /root/vision-pipeline

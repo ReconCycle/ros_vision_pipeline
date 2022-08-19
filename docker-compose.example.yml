@@ -20,6 +20,7 @@ services:
       - NVIDIA_DRIVER_CAPABILITIES=all
     volumes:
       - $HOME/reconcycle/vision-pipeline:/root/vision-pipeline
-      - $HOME/reconcycle/context_action_framework:/root/context_action_framework
+      - $HOME/reconcycle/context_action_framework:/root/catkin_ws/src/context_action_framework
     # command: python ros_pipeline.py --camera_type=realsense
+    network_mode: "host"
     restart: "no"

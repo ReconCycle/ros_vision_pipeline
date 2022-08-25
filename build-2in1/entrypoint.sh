@@ -59,6 +59,14 @@ if [ -d "$DIR" ]; then
     fi
 fi
 
-cd /root/vision-pipeline
+DIR_VISION_PIPELINE=/root/vision-pipeline
+if [ -d "$DIR_VISION_PIPELINE" ]; then
+    cd $DIR_VISION_PIPELINE
+fi
+
+DIR_ACTION_PREDICTOR=/root/action_predictor
+if [ -d "$DIR_ACTION_PREDICTOR" ]; then
+    cd $DIR_ACTION_PREDICTOR
+fi
 
 exec "$@"

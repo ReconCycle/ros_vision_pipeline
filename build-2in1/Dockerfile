@@ -69,6 +69,7 @@ RUN apt update && apt install --no-install-recommends -y \
     python3-vcstools \
     python3-catkin-tools \
     ros-noetic-cv-bridge \
+    ros-noetic-tf \
     vim \
     && rm -rf /var/lib/apt/lists/*
 

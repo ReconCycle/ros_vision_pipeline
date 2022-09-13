@@ -143,6 +143,10 @@ RUN apt install -y librealsense2-dkms librealsense2-utils librealsense2-dev usbu
 ## BEGIN: ROS (again?)
 ################################################################
 
+# convert ros messages to json and back
+RUN cd $CATKIN_WS/src \
+    && git clone https://github.com/uos/rospy_message_converter.git
+
 # these msgs were also used for pylon camera driver, so let's also add them
 RUN cd $CATKIN_WS/src \
     && git clone https://github.com/dragandbot/dragandbot_common.git

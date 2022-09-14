@@ -34,15 +34,12 @@ echo $LD_LIBRARY_PATH
 #     cd /root/vision-pipeline/dlc/DeepLabCut-2.2b8 && ./reinstall.sh
 # fi
 
-# install yolact_pkg
-if ! pip3 list | grep -F yolact &> /dev/null; then
-    echo "installing yolact..."
-    cd /root/vision-pipeline/yolact_pkg && python3 -m pip install -e .
-fi
+DIR_CONTEXT_ACTION_FRAMEWORK=/root/catkin_ws/src/context_action_framework
+DIR_VISION_PIPELINE=/root/vision-pipeline
+DIR_ACTION_PREDICTOR=/root/action_predictor
 
 # install context_action_framework
-DIR=/root/catkin_ws/src/context_action_framework
-if [ -d "$DIR" ]; then
+if [ -d "$DIR_CONTEXT_ACTION_FRAMEWORK" ]; then
     # install python package
     # if ! pip3 list | grep -F context_action_framework &> /dev/null; then
     #     echo "installing context_action_framework..."
@@ -59,12 +56,19 @@ if [ -d "$DIR" ]; then
     fi
 fi
 
-DIR_VISION_PIPELINE=/root/vision-pipeline
+# install yolact_pkg only for vision pipeline
+if [ -d "$DIR_VISION_PIPELINE" ]; then
+    if ! pip3 list | grep -F yolact &> /dev/null; then
+        echo "installing yolact..."
+        cd /root/vision-pipeline/yolact_pkg && python3 -m pip install -e .
+    fi
+fi
+
+# now cd to the right directory
 if [ -d "$DIR_VISION_PIPELINE" ]; then
     cd $DIR_VISION_PIPELINE
 fi
 
-DIR_ACTION_PREDICTOR=/root/action_predictor
 if [ -d "$DIR_ACTION_PREDICTOR" ]; then
     cd $DIR_ACTION_PREDICTOR
 fi

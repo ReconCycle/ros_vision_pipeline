@@ -127,6 +127,7 @@ RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 
 # required for pyrealsense2
 RUN pip3 install rospkg
+RUN pip3 install rospy-message-converter
 
 ################################################################
 ## END: ROS

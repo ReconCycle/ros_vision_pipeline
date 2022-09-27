@@ -92,7 +92,7 @@ RUN pip3 install torch torchvision --extra-index-url https://download.pytorch.or
 
 # RUN pip3 install torch torchvision
 
-RUN pip3 install rich matplotlib numpy pillow scikit-learn scipy tensorboard pyyaml opencv-python regex natsort shapely commentjson pycocotools cython scikit-image pyrealsense2 hdbscan
+RUN pip3 install rich matplotlib numpy pillow scikit-learn scipy tensorboard pyyaml opencv-python regex natsort shapely commentjson pycocotools cython scikit-image pyrealsense2 hdbscan joblib==1.1.0
 RUN pip3 install lap cython_bbox
 
 ################################################################

@@ -1,58 +1,23 @@
 # ROS Package for Vision Pipeline
 
-Docker container that encapsulates the vision pipeline and provides ROS nodes for the camera and data out.
+Docker container that offers GPU support and a configured python environment for [vision-pipeline](https://github.com/ReconCycle/vision-pipeline) and [action-predictor](https://github.com/ReconCycle/action_predictor).
 
 ![RViz](./readme_rviz.png)
 
-## General Configuration
+## Installation
 
-This docker container can capture the images from the camera and process them.
-The capturing of the images from the Basler camera and the processing of the images can be done on **separate PCs**.
+1. `git clone git@github.com:ReconCycle/ros-vision-pipeline.git`
+2. `git clone git@github.com:ReconCycle/vision-pipeline.git`
+3. `git clone git@github.com:ReconCycle/context_action_framework.git`
+4. `cd ros-vision-pipeline`
+5. `docker-compose build --build-arg 'TARGET=gpu'`
+6. `cp docker-compose.example.yml docker-compose.yml`
+7. `docker-compose up -d`
 
-For faster image processing a Nvida graphics card can be used.
 
-## Pylon Basler Camera Software Suite on Docker Host Machine
+To run the [vision-pipeline](https://github.com/ReconCycle/vision-pipeline) follow the installation instructions there.
 
-The Basler camera we are using is: [Basler acA4600-7gc](https://www.baslerweb.com/en/products/cameras/area-scan-cameras/ace/aca4600-7gc).
-
-The camera lens we are using is: [C125-0418-5M-P f4mm](https://www.baslerweb.com/en/products/vision-components/lenses/basler-lens-c125-0418-5m-p-f4mm/).
-The f4mm lens has an approximate effective focal length of 23mm. 
-
-In Göttingen we have the lens mounted **67cm** above the work surface. This allows us to capture the entire work surface in the image.  Göttingen also has the [f25mm lens](https://www.baslerweb.com/en/products/vision-components/lenses/basler-lens-c125-2522-5m-p-f25mm/) from Basler. All compatible lenses can be [found here](https://www.baslerweb.com/en/products/vision-components/lenses/#series=baslerace;model=aca46007gc). The f25mm lens has an approximate effective focal length of 150mm. This means that when mounted above the table at 67cm only a small part of the work surface is in the image.
-
-**When mounting the camera higher than 67cm, a different lens to the f4mm should be considered. If not, the work surface will only occupy a part of the image instead of filling the image.**
-
-1. Download and install the Pylon camera software suite.
- Link: [pylon 6.1.1 Camera Software Suite Linux x86 (64 Bit) - Debian Installer Package](https://www.baslerweb.com/de/vertrieb-support/downloads/downloads-software/#type=pylonsoftware;language=all;version=all;os=linuxx8664bit)
-
-2. To connect to the Basler camera over ethernet, create a new ethernet profile with settings:
-
-- IPv4 Method: Manual
-- Address: 192.168.1.200
-- Netmask: 255.255.255.0
-- Gateway: 192.168.1.1
-
-![basler_ethernet_profile](./notes/basler_ethernet_profile.png)
-
-3. Open the pylon viewer (on the host machine) and check that the Basler Camera appears here.
-
-4. Settings to set for the Basler camera in pylon Viewer, see images in notes folder. Alternatively, do the following:
-
-In Pylon Viewer first set **Configuration Sets** to `Default configuration Set`. Then:
-- In **Analog Controls** set `Gain Auto` -> `Continuous`, and `Gamma Selector` -> `sRGB`. 
-- In **Image Format Controls set** set `Pixel Format` -> `YUV 422 (YUYV) Packed`.
-- In **AOI Controls** set `width` and `height` -> `2900` and `Center X and Y` -> `True`.
-- In **Color Improvements Control** set `Balance White Auto` -> `Continuous`.
-- In **Acquisition Controls** set `Exposure Auto` -> `Continuous` (this is the same as pressing the Automatic Image adjustment button I think?).
-
-Now in **Configuration Sets** save to `User Set 1` so that it can be loaded again easily.
-
-For fine tuning:
-- In **Auto Function Parameters** set `Target gray Value` to `50`
-
-If the FPS is very low (sub 5 fps) it could be because there is not enough light and the continuous exposure is turning up the exposure time. To fix this, open up the aperture or use more light in the room.
-
-The camera uses the [pypylon api](https://github.com/basler/pypylon) and this is installed in this docker image.
+To run the [action-predictor](https://github.com/ReconCycle/action_predictor) follow the installation instructions there.
 
 ## Nvidia GPU Support
 
@@ -152,127 +117,4 @@ Run:
 $ cd ros-vision-pipeline
 $ docker-compose up -d
 ```
-The container should now be running. You can automatically get it to run the pipeline with the following line in the `docker-compose.yml` file.
-```yaml
-command: python ros_pipeline.py --publish_continuously=True
-```
-or run the camera with:
-```yaml
-command: python ros_camera_publisher.py --save=True
-```
-If you want bash access to the container, run:
-```bash
-$ docker-compose exec ros-vision-pipeline bash
-```
 
-You should be able to see the live camera feed in Rviz on the node `/camera/image_color`.
-You can run rviz using the [ros-basler-camera](https://github.com/ReconCycle/ros-basler-camera) docker image.
-
-The `ros_camera_publisher.py` can take the following arguments:
-
-- `--camera_topic` (default /camera/image_color) the name of the camera topic to subscribe to,
-- `--node_name` (default camera) the name of the node,
-- `--save` (default False) save images to folder,
-- `--undistort` (default True) use the calibration file to undistort the image.
-
-The `ros_pipeline.py` script can take the following arguments:
-- `--publish_continuously` (default False) Publish labelled images and detections continuously
-                    otherwise create a service.
-- `--publish_on_service_call` (default True) When a service call is received, also publish the image and detections
-
-Now you should be able to use the following nodes:
-
-- `/camera/image_color` camera image (undistorted),
-- `/vision_pipeline/image_color` labelled camera image (undistorted),
-- `/vision_pipeline/data` JSON string of detections.
-
-The JSON string is a list where each object in the list represents a detection and has the following attributes:
-
-- `class_name` the class name of the detection,
-- `score` the detection score. Float in the interval [0, 1] for how confident the model is in the prediction,
-- `obb_corners` the corners of the oriented bounding box in a list of x, y coordinates in meters,
-- `obb_center` x, y coordinates of oriented bounding box center in meters,
-- `obb_rot_quat` rotation quaternion of the oriented bounding box,
-- `tracking_id` the ID given by the object tracker,
-- `tracking_score` the score given by the object tracker.
-
-The list of possible class names is: front, back, side1, side2, battery, pcb, and internals. Where: front, back, side1, and side2, correspond to the poses of the h.c.a.
-
-There is a ROS service called `get_detection`. This service is only created when `ros_pipeline.py` is started with the argument `publish_continuously False`, which is the default. The service will return the following:
-```
-bool success
-sensor_msgs/Image image
-string detections
-```
-This has been defined in `build/ros_vision_pipeline/Detection.srv`.
-
-## Camera Calibration
-
-To calibrate the camera put a checkerboard in the view of the camera, and move the checkerboard around while taking images. The images should be of size 2900 x 2900 pixels.
-To take the images for calibration run the following in the container:
-```yaml
-command: python ros_camera_publisher.py --save=True --undistort=False --fps=1.0
-```
-Rename the saved folder to something like "calibration_23-06-2021" and move it to the data folder.
-Then run the calibration by running:
-```yaml
-command: python image_calibration.py --input="data/calibration_23-06-2021" --board_h=9 --board_w=6
-```
-This will output the file: `calibration_file.yaml` and some `temp_*` folders to check it performed correctly. 
-
-Set the new `calibration_file.yaml` path in `config.yaml`.
-
-The `image_calibration.py` can take the following parameters:
-
-- `--board_h` (default 8) the board height
-- `--board_w` (default 6) the board width
-- `--input` (default data/calibration) input directory of images
-
-## Resources
-
-Python with ROS:
-
-- http://www.artificialhumancompanions.com/structure-python-based-ros-package/
-- https://docs.freedomrobotics.ai/docs/ros-development-in-docker-on-mac-and-windows
-
-ROS series on Python Package:
-
-- http://wiki.ros.org/ROS/Tutorials/CreatingPackage
-- http://wiki.ros.org/ROS/Tutorials/ExaminingPublisherSubscriber
-- http://wiki.ros.org/ROS/Tutorials/WritingPublisherSubscriber%28python%29
-
-ROS docker setup:
-
-- https://github.com/gramaziokohler/ros_docker
-- https://github.com/ReconCycle/docker_examples/blob/master/compose_files/ros1_echo/docker-compose.yml
-
-Alternative method without requiring to use ROS directly:
-
-- https://github.com/gramaziokohler/roslibpy
-
-ROS opencv cv_bridge:
-
-- https://stackoverflow.com/questions/49221565/unable-to-use-cv-bridge-with-ros-kinetic-and-python3
-
-Publish/Subscribe to Images in ROS:
-
-- https://stackoverflow.com/questions/55377442/how-to-subscribe-and-publish-images-in-ros
-- https://stackoverflow.com/questions/58590277/how-to-use-opencv-python-in-ros
-
-ROS incompatibility with OpenCV Python3:
-
-- https://stackoverflow.com/questions/43019951/after-install-ros-kinetic-cannot-import-opencv 
-
-ROS Yolact:
-
-- https://github.com/Eruvae/yolact_ros
-
-Supervisors
-
-- https://github.com/just-containers/s6-overlay#quickstart
-
-Reduce docker size:
-
-TODO
-
-- https://jcristharif.com/conda-docker-tips.html

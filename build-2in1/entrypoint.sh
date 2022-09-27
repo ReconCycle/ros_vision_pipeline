@@ -66,10 +66,12 @@ fi
 
 # now cd to the right directory
 if [ -d "$DIR_VISION_PIPELINE" ]; then
+    export PATH=$PATH:$DIR_VISION_PIPELINE
     cd $DIR_VISION_PIPELINE
 fi
 
 if [ -d "$DIR_ACTION_PREDICTOR" ]; then
+    export PATH=$PATH:$DIR_ACTION_PREDICTOR
     cd $DIR_ACTION_PREDICTOR
 fi
 

@@ -23,6 +23,6 @@ services:
       - $HOME/reconcycle/vision-pipeline:/root/vision-pipeline
       - $HOME/reconcycle/context_action_framework:/root/catkin_ws/src/context_action_framework
       - "/tmp/.X11-unix:/tmp/.X11-unix" # for using local xserver
-    # command: python ros_pipeline.py --camera_type=realsense
+    command: python ros_pipeline.py --continuous=basler,realsense
     network_mode: "host"
-    restart: "no"
+    restart: "unless-stopped"

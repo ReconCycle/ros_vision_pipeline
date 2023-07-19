@@ -1,0 +1,9 @@
+[submodule "catkin_ws/src/rospy_message_converter"]
+	path = catkin_ws/src/rospy_message_converter
+	url = https://github.com/uos/rospy_message_converter.git
+[submodule "catkin_ws/src/dragandbot_common"]
+	path = catkin_ws/src/dragandbot_common
+	url = https://github.com/dragandbot/dragandbot_common.git
+[submodule "catkin_ws/src/context_action_framework"]
+	path = catkin_ws/src/context_action_framework
+	url = git@github.com:ReconCycle/context_action_framework.git

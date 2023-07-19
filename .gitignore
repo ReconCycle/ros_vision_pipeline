@@ -4,3 +4,17 @@
 *.yaml
 !docker-compose.example.yml
 !docker-compose.example.yaml
+
+catkin_ws/*
+!catkin_ws/src
+
+# python stuff
+__pycache__/
+__pypackages__/
+cython_debug/
+*.egg-info/
+*.egg
+eggs/
+.eggs/
+# C extensions
+*.so

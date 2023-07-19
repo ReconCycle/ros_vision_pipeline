@@ -106,7 +106,7 @@ To set the target, change the following in `docker-compose.yml`:
 ```yaml
 build:
     context: ./build-2in1
-    args: 
+    args:
     TARGET: cpu # cpu or gpu
 ```
 
@@ -116,5 +116,10 @@ Run:
 ```bash
 $ cd ros-vision-pipeline
 $ docker-compose up -d
+```
+
+or
+```bash
+$ docker exec -it ros-vision-pipeline bash
 ```
 

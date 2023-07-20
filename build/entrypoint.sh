@@ -1,7 +1,13 @@
 #!/bin/bash
 
-# Source ROS distro environment and local catwin workspace
-source "/opt/ros/$ROS_DISTRO/setup.bash" && source "$CATKIN_WS/devel/setup.bash" && source "$CATKIN_WS/install/setup.bash"
+# Source ROS distro environment and local catkin_ws
+source "/opt/ros/$ROS_DISTRO/setup.bash"
+if [ -f "$CATKIN_WS/devel/setup.bash" ]; then
+    source "$CATKIN_WS/devel/setup.bash"
+fi
+if [ -f "$CATKIN_WS/install/setup.bash" ]; then
+    source "$CATKIN_WS/install/setup.bash"
+fi
 
 HOME_DIR=/home/docker
 
@@ -9,7 +15,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/python3.8
 export PYTHONPATH=$PYTHONPATH:/usr/local/lib/python3.8
 
 # if something goes wrong with activating the environment we might have to do:
-echo $LD_LIBRARY_PATH
+# echo $LD_LIBRARY_PATH
 
 # DIR_CONTEXT_ACTION_FRAMEWORK=$HOME_DIR/catkin_ws/src/context_action_framework
 DIR_VISION_PIPELINE=$HOME_DIR/vision-pipeline
@@ -55,6 +61,14 @@ fi
 # if build folder doesn't exist, run catkin build
 if [ ! -d "$HOME_DIR/catkin_ws/build" ]; then
     cd $HOME_DIR/catkin_ws && catkin build
+
+    # source the new local catkin_ws
+    if [ -f "$CATKIN_WS/devel/setup.bash" ]; then
+        source "$CATKIN_WS/devel/setup.bash"
+    fi
+    if [ -f "$CATKIN_WS/install/setup.bash" ]; then
+        source "$CATKIN_WS/install/setup.bash"
+    fi
 fi
 
 

@@ -15,13 +15,13 @@ services:
       - ROS_MASTER_URI=http://10.20.0.1:11311
       - ROS_IP=10.20.0.2 # $ hostname -I
       - DISPLAY=$DISPLAY
-      # 
+      #
       # If the computer has CUDA support:
       - NVIDIA_VISIBLE_DEVICES=0
       - NVIDIA_DRIVER_CAPABILITIES=all
     volumes:
-      - $HOME/reconcycle/vision-pipeline:/root/vision-pipeline
-      - $HOME/reconcycle/context_action_framework:/root/catkin_ws/src/context_action_framework
+      - $HOME/reconcycle/vision_pipeline:/home/docker/vision-pipeline
+      - ./catkin_ws:/home/docker/catkin_ws
       - "/tmp/.X11-unix:/tmp/.X11-unix" # for using local xserver
     command: python ros_pipeline.py --continuous=basler,realsense
     network_mode: "host"

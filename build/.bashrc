@@ -126,14 +126,6 @@ export LC_NUMERIC="en_US.UTF-8"
 # ROS
 #############################################
 
-source /opt/ros/noetic/setup.bash
-if [ -f devel/setup.bash ]; then
-    source devel/setup.bash
-fi
-if [ -f devel_cb/setup.bash ]; then
-    source devel_cb/setup.bash
-fi
-
 alias sd='source ~/catkin_ws/devel/setup.bash'
 alias cb='catkin build && sd'
 alias sb='source ~/.bashrc'
@@ -149,4 +141,5 @@ export CUDA_PATH=/usr/local/cuda
 # run entrypoint
 #############################################
 
+# this will source ROS distro environment and local catkin_ws
 source /entrypoint.sh

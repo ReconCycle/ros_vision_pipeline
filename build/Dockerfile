@@ -158,6 +158,7 @@ RUN pip3 install --upgrade pip
 RUN pip3 install rospkg
 RUN pip3 install rospy-message-converter
 RUN pip3 install empy
+RUN pip3 install imagesize
 
 # ROS breaks opencv because python3 will try and default to the python2.7 version of opencv. Delete it.
 # RUN rm /opt/ros/kinetic/lib/python2.7/dist-packages/cv2.so

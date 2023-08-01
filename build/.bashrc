@@ -138,6 +138,12 @@ export CUDA_HOME=/usr/local/cuda
 export CUDA_PATH=/usr/local/cuda
 
 #############################################
+# Python
+#############################################
+
+ export PYTHONPATH="$PYTHONPATH:$HOME/vision-pipeline"
+
+#############################################
 # run entrypoint
 #############################################
 

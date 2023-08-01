@@ -9,8 +9,8 @@ services:
       context: ./build
       args:
         TARGET: gpu
-        UID: 1000
-        GID: 1000
+        UID: 1000 # bash: id -u
+        GID: 1000 # bash: id -g
     environment:
       - ROS_MASTER_URI=http://10.20.0.1:11311
       - ROS_IP=10.20.0.2 # $ hostname -I

@@ -4,13 +4,13 @@ services:
   ros-vision-pipeline:
     container_name: ros-vision-pipeline
     # docker-compose build --build-arg 'TARGET=gpu'
-    # or:
-    # docker-compose build --build-arg 'TARGET=cpu'
     image: reconcycle:ros-vision-pipeline
     build:
-      context: ./build-2in1
+      context: ./build
       args:
-        TARGET: gpu # cpu or gpu
+        TARGET: gpu
+        UID: 1000
+        GID: 1000
     environment:
       - ROS_MASTER_URI=http://10.20.0.1:11311
       - ROS_IP=10.20.0.2 # $ hostname -I
@@ -19,10 +19,15 @@ services:
       # If the computer has CUDA support:
       - NVIDIA_VISIBLE_DEVICES=0
       - NVIDIA_DRIVER_CAPABILITIES=all
+      # colours in log
+      - DEBUG_COLORS=true
+      - TERM=xterm-256color
+      - COLORTERM=truecolor
+    tty: true # keep container running
     volumes:
       - $HOME/reconcycle/vision_pipeline:/home/docker/vision-pipeline
       - ./catkin_ws:/home/docker/catkin_ws
       - "/tmp/.X11-unix:/tmp/.X11-unix" # for using local xserver
-    command: python ros_pipeline.py --continuous=basler,realsense
+    command: python ros_pipeline.py
     network_mode: "host"
     restart: "unless-stopped"

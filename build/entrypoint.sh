@@ -18,7 +18,7 @@ export PYTHONPATH=$PYTHONPATH:/usr/local/lib/python3.8
 # echo $LD_LIBRARY_PATH
 
 # DIR_CONTEXT_ACTION_FRAMEWORK=$HOME_DIR/catkin_ws/src/context_action_framework
-DIR_VISION_PIPELINE=$HOME_DIR/vision-pipeline
+DIR_VISION_PIPELINE=$HOME_DIR/vision_pipeline
 DIR_ACTION_PREDICTOR=$HOME_DIR/action_predictor
 
 # install context_action_framework
@@ -43,7 +43,7 @@ DIR_ACTION_PREDICTOR=$HOME_DIR/action_predictor
 if [ -d "$DIR_VISION_PIPELINE" ]; then
     if ! pip3 list | grep -F yolact &> /dev/null; then
         echo "installing yolact..."
-        cd $HOME_DIR/vision-pipeline/yolact_pkg && python3 -m pip install -e .
+        cd $HOME_DIR/vision_pipeline/yolact_pkg && python3 -m pip install -e .
     fi
 fi
 

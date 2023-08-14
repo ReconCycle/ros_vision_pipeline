@@ -1,10 +1,10 @@
 version: '3.9'
 
 services:
-  ros-vision-pipeline:
-    container_name: ros-vision-pipeline
+  ros_vision_pipeline:
+    container_name: ros_vision_pipeline
     # docker-compose build --build-arg 'TARGET=gpu'
-    image: reconcycle:ros-vision-pipeline
+    image: reconcycle:ros_vision_pipeline
     build:
       context: ./build
       args:
@@ -25,7 +25,7 @@ services:
       - COLORTERM=truecolor
     tty: true # keep container running
     volumes:
-      - $HOME/reconcycle/vision_pipeline:/home/docker/vision-pipeline
+      - $HOME/reconcycle/vision_pipeline:/home/docker/vision_pipeline
       - ./catkin_ws:/home/docker/catkin_ws
       - "/tmp/.X11-unix:/tmp/.X11-unix" # for using local xserver
     command: python ros_pipeline.py

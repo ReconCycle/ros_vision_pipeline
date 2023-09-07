@@ -1,7 +1,5 @@
 # use ubuntu 20.04 because we want to use ROS noetic
-ARG TARGET="gpu"
-FROM nvidia/cuda:11.3.1-cudnn8-devel-ubuntu20.04 as gpu
-# FROM ubuntu:20.04 as cpu
+FROM nvidia/cuda:11.3.1-cudnn8-devel-ubuntu20.04
 ARG UID=1000
 ARG GID=1000
 
@@ -85,6 +83,8 @@ RUN apt update && apt install --no-install-recommends -y \
     ros-noetic-ros-numpy \
     ros-noetic-image-view \
     ros-noetic-image-pipeline \
+    ros-noetic-libfranka \
+    ros-noetic-franka-ros \
     vim \
     libx11-dev \
     python3-tk \
@@ -107,7 +107,9 @@ RUN rosdep init && \
 #        pip3 install torch torchvision \
 #     fi
 
-RUN pip3 install torch torchvision --extra-index-url https://download.pytorch.org/whl/cu113
+# RUN pip3 install torch torchvision --extra-index-url https://download.pytorch.org/whl/cu113
+RUN pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 torchaudio==0.12.1 --extra-index-url https://download.pytorch.org/whl/cu113
+
 
 # RUN pip3 install torch torchvision
 RUN pip3 install --ignore-installed PyYAML
@@ -160,10 +162,23 @@ RUN pip3 install rospy-message-converter
 RUN pip3 install empy
 RUN pip3 install imagesize
 
+RUN pip3 install ultralytics
+
 RUN pip3 install pyperplan
 RUN pip3 install unified-planning
 RUN pip3 install unified-planning[engines]
 RUN pip3 install unified-planning[pyperplan]
+
+# # tessseract OCR
+# RUN add-apt-repository ppa:alex-p/tesseract-ocr
+# RUN apt update && apt install --no-install-recommends -y \
+#     tesseract-ocr
+# RUN pip3 install pytesseract
+# RUN pip3 install imutils
+
+# # Paddle OCR
+# RUN pip3 install "paddleocr>=2.0.1"
+# RUN pip3 install paddlepaddle
 
 # ROS breaks opencv because python3 will try and default to the python2.7 version of opencv. Delete it.
 # RUN rm /opt/ros/kinetic/lib/python2.7/dist-packages/cv2.so
@@ -176,6 +191,8 @@ COPY .bashrc /home/docker/.bashrc
 
 COPY ./entrypoint.sh /
 RUN chmod +x /entrypoint.sh
+
+WORKDIR /home/docker
 
 ENTRYPOINT ["/entrypoint.sh"]
 

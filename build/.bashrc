@@ -137,11 +137,15 @@ alias sb='source ~/.bashrc'
 export CUDA_HOME=/usr/local/cuda
 export CUDA_PATH=/usr/local/cuda
 
+export CUDA_DEVICE_ORDER=PCI_BUS_ID
+
 #############################################
 # Python
 #############################################
 
- export PYTHONPATH="$PYTHONPATH:$HOME/vision-pipeline"
+export PYTHONPATH="$PYTHONPATH:$HOME"
+export PYTHONPATH="$PYTHONPATH:$HOME/vision_pipeline"
+export PYTHONPATH="$PYTHONPATH:$HOME/vision_pipeline/yolact_pkg"
 
 #############################################
 # run entrypoint

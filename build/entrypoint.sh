@@ -12,7 +12,7 @@ fi
 HOME_DIR=/home/docker
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/python3.8
-export PYTHONPATH=$PYTHONPATH:/usr/local/lib/python3.8
+# export PYTHONPATH=$PYTHONPATH:/usr/local/lib/python3.8
 
 # if something goes wrong with activating the environment we might have to do:
 # echo $LD_LIBRARY_PATH
@@ -48,15 +48,15 @@ if [ -d "$DIR_VISION_PIPELINE" ]; then
 fi
 
 # now cd to the right directory
-if [ -d "$DIR_VISION_PIPELINE" ]; then
-    export PATH=$PATH:$DIR_VISION_PIPELINE
-    cd $DIR_VISION_PIPELINE
-fi
+# if [ -d "$DIR_VISION_PIPELINE" ]; then
+#     export PATH=$PATH:$DIR_VISION_PIPELINE
+#     cd $DIR_VISION_PIPELINE
+# fi
 
-if [ -d "$DIR_ACTION_PREDICTOR" ]; then
-    export PATH=$PATH:$DIR_ACTION_PREDICTOR
-    cd $DIR_ACTION_PREDICTOR
-fi
+# if [ -d "$DIR_ACTION_PREDICTOR" ]; then
+#     export PATH=$PATH:$DIR_ACTION_PREDICTOR
+#     cd $DIR_ACTION_PREDICTOR
+# fi
 
 # if build folder doesn't exist, run catkin build
 if [ ! -d "$HOME_DIR/catkin_ws/build" ]; then

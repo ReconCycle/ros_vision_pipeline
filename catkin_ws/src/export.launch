@@ -5,9 +5,15 @@
   </node>
 </launch> -->
 
+<!-- http://wiki.ros.org/rosbag/Tutorials/Exporting%20image%20and%20video%20data -->
+
+<!-- cd ~/catkin_ws/src -->
+<!-- roslaunch export.launch -->
+
 <launch>
-  <node pkg="rosbag" type="play" name="rosbag" required="true" args="/root/rosbags/2023-06-21_fire_alarms/realsense_2023-06-21-09-29-23.bag"/>
+  <node pkg="rosbag" type="play" name="rosbag" required="true" args="/home/docker/rosbags/2023-08-17_fire_alarms/basler_2023-08-17-11-00-01.bag"/>
   <node name="extract" pkg="image_view" type="extract_images" respawn="false" required="true" output="screen" cwd="ROS_HOME">
-    <remap from="image" to="/realsense/color/image_raw"/>
+    <!-- <remap from="image" to="/realsense/color/image_raw"/> -->
+    <remap from="image" to="/basler/image_rect_color"/>
   </node>
 </launch>

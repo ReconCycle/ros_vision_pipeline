@@ -148,6 +148,7 @@ export PYTHONPATH="$PYTHONPATH:$HOME/vision_pipeline"
 # export PYTHONPATH="$PYTHONPATH:$HOME/vision_pipeline/yolact_pkg"
 
 export PYTHONPATH="$PYTHONPATH:$HOME/disassembly_pipeline"
+export PYTHONPATH="$PYTHONPATH:$HOME/robotblockset_python"
 
 #############################################
 # run entrypoint

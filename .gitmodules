@@ -7,3 +7,19 @@
 [submodule "catkin_ws/src/context_action_framework"]
 	path = catkin_ws/src/context_action_framework
 	url = git@github.com:ReconCycle/context_action_framework.git
+[submodule "catkin_ws/src/robot_module_msgs"]
+	path = catkin_ws/src/robot_module_msgs
+	url = git@github.com:ReconCycle/robot_module_msgs.git
+[submodule "catkin_ws/src/reconcycle_states"]
+	path = catkin_ws/src/reconcycle_states
+	url = git@github.com:ReconCycle/reconcycle_states.git
+	branch = rbs_devel
+[submodule "catkin_ws/src/generic_flexbe_states"]
+	path = catkin_ws/src/generic_flexbe_states
+	url = https://github.com/FlexBE/generic_flexbe_states.git
+[submodule "catkin_ws/src/flexbe_behavior_engine"]
+	path = catkin_ws/src/flexbe_behavior_engine
+	url = https://github.com/team-vigir/flexbe_behavior_engine.git
+[submodule "catkin_ws/src/digital_interface_msgs"]
+	path = catkin_ws/src/digital_interface_msgs
+	url = git@github.com:ReconCycle/digital_interface_msgs.git

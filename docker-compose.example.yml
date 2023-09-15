@@ -29,5 +29,6 @@ services:
       - ./catkin_ws:/home/docker/catkin_ws
       - "/tmp/.X11-unix:/tmp/.X11-unix" # for using local xserver
     command: python ros_pipeline.py
+    privileged: true # fixes nvidia sometimes breaking # https://github.com/NVIDIA/nvidia-docker/issues/1671
     network_mode: "host"
     restart: "unless-stopped"

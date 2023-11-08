@@ -140,17 +140,6 @@ export CUDA_PATH=/usr/local/cuda
 export CUDA_DEVICE_ORDER=PCI_BUS_ID
 
 #############################################
-# Python
-#############################################
-
-export PYTHONPATH="$PYTHONPATH:$HOME"
-export PYTHONPATH="$PYTHONPATH:$HOME/vision_pipeline"
-# export PYTHONPATH="$PYTHONPATH:$HOME/vision_pipeline/yolact_pkg"
-
-export PYTHONPATH="$PYTHONPATH:$HOME/disassembly_pipeline"
-export PYTHONPATH="$PYTHONPATH:$HOME/robotblockset_python"
-
-#############################################
 # run entrypoint
 #############################################
 

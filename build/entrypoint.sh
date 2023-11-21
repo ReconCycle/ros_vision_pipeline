@@ -10,6 +10,7 @@ if [ -f "$CATKIN_WS/install/setup.bash" ]; then
 fi
 
 HOME_DIR=/home/docker
+DIR_VISION_PIPELINE=/home/docker/vision_pipeline
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/python3.8
 
@@ -47,5 +48,6 @@ export PYTHONPATH="$PYTHONPATH:$HOME/action_predictor"
 export PYTHONPATH="$PYTHONPATH:$HOME/disassembly_pipeline"
 export PYTHONPATH="$PYTHONPATH:$HOME/robotblockset_python"
 
+cd $HOME_DIR/vision_pipeline
 
 exec "$@"

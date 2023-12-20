@@ -1,8 +1,5 @@
 # use ubuntu 20.04 because we want to use ROS noetic
-# FROM nvidia/cuda:11.3.1-cudnn8-devel-ubuntu20.04
-FROM nvidia/cuda:11.8.0-cudnn8-devel-ubuntu20.04
-ARG UID=1000
-ARG GID=1000
+FROM nvidia/cuda:11.3.1-cudnn8-devel-ubuntu20.04
 
 # FROM ros:noetic
 LABEL maintainer "Sebastian Ruiz <sruiz@mailbox.org>"
@@ -84,8 +81,6 @@ RUN apt update && apt install --no-install-recommends -y \
     ros-noetic-ros-numpy \
     ros-noetic-image-view \
     ros-noetic-image-pipeline \
-    ros-noetic-libfranka \
-    ros-noetic-franka-ros \
     vim \
     screen \
     libx11-dev \
@@ -126,10 +121,10 @@ RUN pip3 install ultralytics
 ################################################################
 
 # https://stackoverflow.com/questions/27701930/how-to-add-users-to-docker-container
-RUN groupadd -g $GID docker
-RUN useradd -rm -d /home/docker -s /bin/bash -g docker -G sudo -u $UID docker -p "$(openssl passwd -1 docker)"
+# RUN groupadd -g $GID docker
+# RUN useradd -rm -d /home/docker -s /bin/bash -g docker -G sudo -u $UID docker -p "$(openssl passwd -1 docker)"
 
-RUN touch /home/docker/.sudo_as_admin_successful
+# RUN touch /home/docker/.sudo_as_admin_successful
 
 # enable case-insensitive tab completion
 RUN echo 'set completion-ignore-case On' >> /etc/inputrc
@@ -140,7 +135,7 @@ RUN echo 'set completion-ignore-case On' >> /etc/inputrc
 ################################################################
 
 # Create local catkin workspace
-ENV CATKIN_WS=/home/docker/catkin_ws
+ENV CATKIN_WS=/root/catkin_ws
 ENV ROS_PYTHON_VERSION=3
 WORKDIR $CATKIN_WS
 
@@ -165,26 +160,6 @@ RUN pip3 install rospy-message-converter
 RUN pip3 install empy
 RUN pip3 install imagesize
 
-RUN pip3 install ultralytics
-
-RUN pip3 install pyperplan
-RUN pip3 install unified-planning
-RUN pip3 install unified-planning[engines]
-RUN pip3 install unified-planning[pyperplan]
-
-RUN pip3 install quaternionic numpy-quaternion
-
-# # tessseract OCR
-# RUN add-apt-repository ppa:alex-p/tesseract-ocr
-# RUN apt update && apt install --no-install-recommends -y \
-#     tesseract-ocr
-# RUN pip3 install pytesseract
-# RUN pip3 install imutils
-
-# # Paddle OCR
-# RUN pip3 install "paddleocr>=2.0.1"
-# RUN pip3 install paddlepaddle
-
 # ROS breaks opencv because python3 will try and default to the python2.7 version of opencv. Delete it.
 # RUN rm /opt/ros/kinetic/lib/python2.7/dist-packages/cv2.so
 
@@ -192,17 +167,12 @@ RUN pip3 install quaternionic numpy-quaternion
 ## END: python
 ################################################################
 
-COPY .bashrc /home/docker/.bashrc
+COPY .bashrc /root/.bashrc
 
 COPY ./entrypoint.sh /
 RUN chmod +x /entrypoint.sh
-
-RUN mkdir /home/docker/vision_pipeline
-WORKDIR /home/docker/vision_pipeline
 
 ENTRYPOINT ["/entrypoint.sh"]
 
 # stop docker from exiting immediately
 CMD tail -f /dev/null
-
-USER docker

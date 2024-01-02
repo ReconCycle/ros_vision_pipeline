@@ -90,6 +90,7 @@ RUN apt update && apt install --no-install-recommends -y \
     screen \
     libx11-dev \
     python3-tk \
+    git-lfs \
     && rm -rf /var/lib/apt/lists/*
 
 # for showing matplotlib windows, we need: libx11-dev, python3-tk

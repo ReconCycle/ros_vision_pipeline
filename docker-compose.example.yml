@@ -3,7 +3,6 @@ version: '3.9'
 services:
   ros_vision_pipeline:
     container_name: ros_vision_pipeline
-    # docker-compose build --build-arg 'TARGET=gpu'
     image: reconcycle:ros_vision_pipeline
     build:
       context: ./build
@@ -26,8 +25,15 @@ services:
     tty: true # keep container running
     volumes:
       - $HOME/reconcycle/vision_pipeline:/home/docker/vision_pipeline
+      - $HOME/reconcycle/device_reid:/home/docker/device_reid
+      - $HOME/reconcycle/action_predictor:/home/docker/action_predictor
+      - $HOME/reconcycle/superglue_training:/home/docker/superglue_training
+
+      - $HOME/reconcycle/vision_pipeline:/home/docker/vision_pipeline
+    
       - ./catkin_ws:/home/docker/catkin_ws
       - "/tmp/.X11-unix:/tmp/.X11-unix" # for using local xserver
+      - $HOME/.ssh:/root/.ssh
     command: python ros_pipeline.py
     privileged: true # fixes nvidia sometimes breaking # https://github.com/NVIDIA/nvidia-docker/issues/1671
     network_mode: "host"

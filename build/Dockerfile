@@ -48,6 +48,9 @@ RUN apt update && apt install --no-install-recommends -y \
     build-essential
 RUN add-apt-repository universe
 
+# install newer version of git
+RUN add-apt-repository ppa:git-core/ppa -y
+
 RUN apt update --fix-missing && apt install -y wget bzip2 ca-certificates zlib1g-dev libncurses5-dev libgdbm-dev \
     libglib2.0-0 libxext6 libsm6 libxrender1 libffi-dev \
     git \

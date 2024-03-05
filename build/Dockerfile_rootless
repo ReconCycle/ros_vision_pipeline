@@ -110,7 +110,7 @@ RUN pip3 install --ignore-installed PyYAML
 RUN pip3 install lightning torchsummary
 
 RUN pip3 install numpy==1.23.5
-RUN pip3 install rich matplotlib numpy pandas pillow scikit-learn scipy pyyaml tensorboard opencv-contrib-python regex ftfy natsort shapely commentjson pycocotools cython scikit-image pyrealsense2 hdbscan joblib==1.1.0 jsonpickle ipykernel probreg albumentations seaborn seaborn-image imutils
+RUN pip3 install rich matplotlib numpy pandas pillow scikit-learn scipy pyyaml tensorboard opencv-contrib-python regex ftfy natsort shapely commentjson pycocotools cython scikit-image pyrealsense2 hdbscan joblib==1.1.0 jsonpickle ipykernel probreg albumentations seaborn seaborn-image imutils tol_colors
 RUN pip3 install lap cython_bbox
 RUN pip3 install git+https://github.com/openai/CLIP.git
 RUN pip3 install ultralytics

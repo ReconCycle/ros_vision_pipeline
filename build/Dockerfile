@@ -1,5 +1,4 @@
 # use ubuntu 20.04 because we want to use ROS noetic
-# FROM nvidia/cuda:11.3.1-cudnn8-devel-ubuntu20.04
 FROM nvidia/cuda:11.8.0-cudnn8-devel-ubuntu20.04
 ARG UID=1000
 ARG GID=1000

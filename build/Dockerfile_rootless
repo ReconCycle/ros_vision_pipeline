@@ -47,6 +47,9 @@ RUN apt update && apt install --no-install-recommends -y \
     build-essential
 RUN add-apt-repository universe
 
+# install newer version of git
+RUN add-apt-repository ppa:git-core/ppa -y
+
 RUN apt update --fix-missing && apt install -y wget bzip2 ca-certificates zlib1g-dev libncurses5-dev libgdbm-dev \
     libglib2.0-0 libxext6 libsm6 libxrender1 libffi-dev \
     git \
@@ -83,6 +86,8 @@ RUN apt update && apt install --no-install-recommends -y \
     ros-noetic-ros-numpy \
     ros-noetic-image-view \
     ros-noetic-image-pipeline \
+    ros-noetic-libfranka \
+    ros-noetic-franka-ros \
     vim \
     screen \
     libx11-dev \
@@ -98,28 +103,6 @@ RUN rosdep init && \
 
 ################################################################
 ## END: ros:noetic
-## BEGIN: python packages
-################################################################
-
-# RUN if [ "$TARGET" = "gpu" ] ; then \
-#        pip3 install torch torchvision --extra-index-url https://download.pytorch.org/whl/cu113  \
-#     else \
-#        pip3 install torch torchvision \
-#     fi
-
-# RUN pip3 install torch torchvision --extra-index-url https://download.pytorch.org/whl/cu113
-RUN pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 torchaudio==0.12.1 --extra-index-url https://download.pytorch.org/whl/cu113
-RUN pip3 install --ignore-installed PyYAML
-RUN pip3 install lightning torchsummary
-
-RUN pip3 install numpy==1.23.5
-RUN pip3 install rich matplotlib numpy pandas pillow scikit-learn scipy pyyaml tensorboard opencv-contrib-python regex ftfy natsort shapely commentjson pycocotools cython scikit-image pyrealsense2 hdbscan joblib==1.1.0 jsonpickle ipykernel probreg albumentations seaborn seaborn-image imutils tol_colors
-RUN pip3 install lap cython_bbox
-RUN pip3 install git+https://github.com/openai/CLIP.git
-RUN pip3 install ultralytics
-
-################################################################
-## END: python packages
 ## BEGIN: user setup
 ################################################################
 
@@ -158,10 +141,27 @@ RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 RUN pip3 install --upgrade pip
 
+# install neural network packages
+RUN pip3 install torch==1.12.1+cu113 torchvision==0.13.1+cu113 torchaudio==0.12.1 lightning torchsummary numpy tensorboard cython_bbox git+https://github.com/openai/CLIP.git ultralytics --extra-index-url https://download.pytorch.org/whl/cu113 --ignore-installed PyYAML
+
+# install other packages
+# set numpy==1.23.5 to avoid "module 'numpy' has no attribute 'float' error"
+RUN pip3 install rich matplotlib numpy==1.23.5 pandas pillow scikit-learn scipy pyyaml opencv-contrib-python regex ftfy natsort shapely commentjson pycocotools cython==0.29.37 scikit-image pyrealsense2 hdbscan joblib==1.1.0 jsonpickle ipykernel probreg albumentations seaborn seaborn-image imutils tol_colors lap
+
+# cython is problematic for some reason, with hdbscan. Reinstall:
+RUN pip3 install --upgrade --force-reinstall cython
+
 RUN pip3 install rospkg
 RUN pip3 install rospy-message-converter
 RUN pip3 install empy
 RUN pip3 install imagesize
+
+RUN pip3 install pyperplan
+RUN pip3 install unified-planning
+RUN pip3 install unified-planning[engines]
+RUN pip3 install unified-planning[pyperplan]
+
+RUN pip3 install quaternionic numpy-quaternion
 
 # ROS breaks opencv because python3 will try and default to the python2.7 version of opencv. Delete it.
 # RUN rm /opt/ros/kinetic/lib/python2.7/dist-packages/cv2.so

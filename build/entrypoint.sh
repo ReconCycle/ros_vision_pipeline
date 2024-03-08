@@ -17,7 +17,8 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/python3.8
 if [ -d "$DIR_VISION_PIPELINE" ]; then
     if ! pip3 list | grep -F yolact &> /dev/null; then
         echo "installing yolact..."
-        cd $HOME/vision_pipeline/yolact_pkg && python3 -m pip install -e .
+        # --user parameter needed for Docker rootless
+        cd $HOME/vision_pipeline/yolact_pkg && python3 -m pip install --user -e .
     fi
 fi
 

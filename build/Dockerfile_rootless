@@ -151,6 +151,7 @@ RUN pip3 install rich matplotlib numpy==1.23.5 pandas pillow scikit-learn scipy 
 # cython is problematic for some reason, with hdbscan. Reinstall:
 RUN pip3 install --upgrade --force-reinstall cython
 
+RUN pip3 install cmake
 RUN pip3 install rospkg
 RUN pip3 install rospy-message-converter
 RUN pip3 install empy

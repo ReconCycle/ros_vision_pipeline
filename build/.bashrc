@@ -127,7 +127,7 @@ export LC_NUMERIC="en_US.UTF-8"
 #############################################
 
 alias sd='source ~/catkin_ws/devel/setup.bash'
-alias cb='catkin build && sd'
+alias cb='(cd ~/catkin_ws && catkin build && sd)'
 alias sb='source ~/.bashrc'
 
 #############################################

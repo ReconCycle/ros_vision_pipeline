@@ -48,6 +48,9 @@ export PYTHONPATH="$PYTHONPATH:$HOME/action_predictor"
 export PYTHONPATH="$PYTHONPATH:$HOME/disassembly_pipeline"
 export PYTHONPATH="$PYTHONPATH:$HOME/robotblockset_python"
 
+#! I don't know if we need this... maybe it breaks things
+export PYTHONPATH="$PYTHONPATH:$HOME/devel/lib/python3/dist-packages"
+
 cd "$HOME/vision_pipeline"
 
 exec "$@"

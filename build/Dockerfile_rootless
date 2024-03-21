@@ -86,6 +86,7 @@ RUN apt update && apt install --no-install-recommends -y \
     ros-noetic-ros-numpy \
     ros-noetic-image-view \
     ros-noetic-image-pipeline \
+    ros-noetic-image-transport-plugins \
     ros-noetic-libfranka \
     ros-noetic-franka-ros \
     vim \

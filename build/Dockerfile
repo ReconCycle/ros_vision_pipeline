@@ -172,7 +172,7 @@ RUN pip3 install quaternionic numpy-quaternion
 ## END: python
 ################################################################
 
-COPY .bashrc /home/docker/.bashrc
+COPY bashrc.sh /home/docker/.bashrc
 
 COPY ./entrypoint.sh /
 RUN chmod +x /entrypoint.sh

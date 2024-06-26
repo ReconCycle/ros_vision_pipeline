@@ -42,6 +42,7 @@ fi
 # export PYTHONPATH=$PYTHONPATH:/usr/local/lib/python3.8
 export PYTHONPATH="$PYTHONPATH:$HOME"
 export PYTHONPATH="$PYTHONPATH:$HOME/vision_pipeline"
+export PYTHONPATH="$PYTHONPATH:$HOME/device_reid"
 # export PYTHONPATH="$PYTHONPATH:$HOME/vision_pipeline/yolact_pkg"
 
 export PYTHONPATH="$PYTHONPATH:$HOME/action_predictor"

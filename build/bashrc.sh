@@ -56,11 +56,19 @@ if [ -n "$force_color_prompt" ]; then
     fi
 fi
 
+function get_screen_session_number() {
+   screen_name=${STY#[0-9]*.}
+   length=${#screen_name}
+   if (( $length > 0 )); then
+       echo $screen_name
+   fi
+}
+
 if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;31m\]\u@\h\[\033[00m\]:\[\033[01;35m\]\w\[\033[00m\]\$ '
+        PS1='${debian_chroot:+($debian_chroot)}\[\033[01;31m\]\u@\h\[\033[00m\]$(get_screen_session_number):\[\033[01;35m\]\w\[\033[00m\]\$ '
 
 else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+        PS1='${debian_chroot:+($debian_chroot)}\u@\h $(get_screen_session_number):\w\$ '
 fi
 unset color_prompt force_color_prompt
 

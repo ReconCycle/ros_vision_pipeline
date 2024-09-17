@@ -30,7 +30,9 @@ services:
       - $HOME/reconcycle/superglue_training:/home/docker/superglue_training
 
       - $HOME/reconcycle/vision_pipeline:/home/docker/vision_pipeline
-    
+      
+      - /etc/timezone:/etc/timezone:ro   # correct timezone
+      - /etc/localtime:/etc/localtime:ro # correct timezone
       - ./catkin_ws:/home/docker/catkin_ws
       - "/tmp/.X11-unix:/tmp/.X11-unix" # for using local xserver
       - $HOME/.ssh:/root/.ssh
